@@ -23,8 +23,8 @@
         WindowStartupLocation="CenterScreen"
         TransparencyLevelHint="AcrylicBlur"
         TransparencyBackgroundFallback="Transparent"
-        Icon="/Assets/Images/logo.ico"
-        Title="Gml.Launcher">
+        Icon="/Assets/Images/jokerge_icon.png"
+        Title="Jokerge Launcher">
 
     <Grid>
         <Border CornerRadius="5" ClipToBounds="True">

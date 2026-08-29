@@ -1,6 +1,7 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:Gml.Launcher.Views.Components"
+        xmlns:converters="clr-namespace:Gml.Launcher.Core.Converters"
         xmlns:lang="clr-namespace:Gml.Launcher.Assets.Resources">
 
     <Design.PreviewWith>
@@ -81,9 +82,18 @@
                         CornerRadius="{TemplateBinding CornerRadius}"
                         Width="{TemplateBinding Width}"
                         Height="{TemplateBinding Height}">
-                    <Svg Path="{TemplateBinding IconPath}"
-                         Width="{TemplateBinding IconSize}"
-                         Height="{TemplateBinding IconSize}" />
+                    <Panel>
+                        <Svg Path="{TemplateBinding IconPath}"
+                             Width="{TemplateBinding IconSize}"
+                             Height="{TemplateBinding IconSize}" />
+                        <Border CornerRadius="0"
+                                ClipToBounds="True"
+                                Width="{TemplateBinding AvatarSize}"
+                                Height="{TemplateBinding AvatarSize}">
+                            <Image converters:AsyncSkinHeadLoader.Source="{TemplateBinding AvatarUrl}"
+                                   Stretch="UniformToFill" />
+                        </Border>
+                    </Panel>
                 </Button>
             </ControlTemplate>
         </Setter>

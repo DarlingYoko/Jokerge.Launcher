@@ -1,8 +1,9 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <SolidColorBrush x:Key="PrimaryColor">#008C45</SolidColorBrush>
-    <SolidColorBrush x:Key="PrimaryColorHover">#01763B</SolidColorBrush>
+    <SolidColorBrush x:Key="PrimaryColor">#a42f2f</SolidColorBrush>
+    <SolidColorBrush x:Key="PrimaryColorHover">#832525</SolidColorBrush>
+    <SolidColorBrush x:Key="PrimaryColorTinted">#50eb4444</SolidColorBrush>
     <SolidColorBrush x:Key="PrimaryTransparentColor">#101412</SolidColorBrush>
 
     <SolidColorBrush x:Key="HeadlineColor">#FFFFFF</SolidColorBrush>
@@ -27,8 +28,8 @@
     <LinearGradientBrush x:Key="ProfileLinearGradient" StartPoint="0%, 0%" EndPoint="0%, 100%" Opacity=".3">
         <LinearGradientBrush.GradientStops>
             <GradientStop Offset="0" Color="Transparent" />
-            <GradientStop Offset="0.2" Color="#10018A44" />
-            <GradientStop Offset="1" Color="#018A44" />
+            <GradientStop Offset="0.2" Color="#10a42f2f" />
+            <GradientStop Offset="1" Color="#a42f2f" />
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
 

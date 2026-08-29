@@ -15,53 +15,63 @@
     <Grid>
         <!-- Background -->
         <!-- <components:BackgroundComponent Grid.Column="0" /> -->
+
         <Border Padding="20">
-            <Grid ColumnDefinitions="350, 30, 0.65*" RowDefinitions="Auto, 30, *">
+            <Grid RowDefinitions="Auto, 30, *">
 
                 <!-- Navigation -->
-                <Grid Grid.ColumnSpan="3" Grid.Row="0">
+                <Grid Grid.Row="0">
                     <components:GmlButton Classes="TextIcon Additional"
-                                          Padding="15, 0, 20 ,0"
+                                          Padding="15, 0, 20, 0"
                                           IconPath="/Assets/Images/back.svg"
                                           IconSize="22"
                                           Text="{x:Static lang:Resources.Back}"
                                           Command="{Binding GoBackCommand}" />
                 </Grid>
 
+                <!-- Player Info -->
+                <Grid Grid.Row="2"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Top">
 
-                <components:ProfileUserControl Grid.Row="2"
-                                               Grid.Column="0"
-                                               UserName="{Binding LauncherUser.Name}"
-                                               SkinUrl="{Binding TextureUrl, Converter={converters:NoiseStringAddConverter}}"
-                                               VerticalAlignment="Top">
+                    <components:ProfileUserControl
+                        Width="350"
+                        Height="350"
+                        UserName="{Binding LauncherUser.Name}"
+                        SkinUrl="{Binding TextureUrl, Converter={converters:NoiseStringAddConverter}}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top">
+
+                        <components:ProfileInfoComponent />
+
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="15"
+                                    HorizontalAlignment="Center">
+
+                            <components:GmlButton Classes="Icon Additional"
+                                                  Margin="0, 0, 0, 0"
+                                                  IsEnabled="{Binding !IsUploading}"
+                                                  Click="OnChangeSkinClick"
+                                                  IconPath="/Assets/Images/profile.svg"
+                                                  Text="{x:Static lang:Resources.ChangeSkin}"
+                                                  ToolTip.Tip="{x:Static lang:Resources.ChangeSkin}"
+                                                  HorizontalAlignment="Center" />
+
+                            <components:GmlButton Classes="Icon Additional"
+                                                  Margin="0, 0, 0, 0"
+                                                  IsEnabled="{Binding !IsUploading}"
+                                                  Click="OnChangeCloakClick"
+                                                  IconPath="/Assets/Images/document.svg"
+                                                  Text="{x:Static lang:Resources.ChangeCloak}"
+                                                  ToolTip.Tip="{x:Static lang:Resources.ChangeCloak}"
+                                                  HorizontalAlignment="Center" />
 
 
-                    <components:ProfileInfoComponent />
+                        </StackPanel>
 
+                    </components:ProfileUserControl>
 
-                    <StackPanel Orientation="Horizontal"
-                                Spacing="15"
-                                HorizontalAlignment="Center">
-                        <components:GmlButton Classes="Icon Additional"
-                                              Margin="0, 15, 0, 0"
-                                              Command="{Binding OpenLinkCommand}"
-                                              CommandParameter="https://recloud.tech"
-                                              IconPath="/Assets/Images/profile.svg"
-                                              Text="{x:Static lang:Resources.Cabinet}"
-                                              HorizontalAlignment="Center" />
-
-                        <components:GmlButton Classes="TextIcon Primary"
-                                              Margin="0, 15, 0, 0"
-                                              Padding="15, 10, 10, 10"
-
-                                              Command="{Binding OpenLinkCommand}"
-                                              CommandParameter="https://recloud.tech"
-                                              IconSize="20"
-                                              IconPath="/Assets/Images/home.svg"
-                                              Text="{x:Static lang:Resources.Cabinet}"
-                                              HorizontalAlignment="Center" />
-                    </StackPanel>
-                </components:ProfileUserControl>
+                </Grid>
 
             </Grid>
         </Border>

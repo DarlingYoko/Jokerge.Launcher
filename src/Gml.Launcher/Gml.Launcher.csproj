@@ -6,12 +6,20 @@
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-    <ApplicationIcon>Assets\Images\logo.ico</ApplicationIcon>
-    <AssemblyVersion>2026.1</AssemblyVersion>
-    <FileVersion>2026.1</FileVersion>
+    <ApplicationIcon>Assets\Images\jokerge_icon.ico</ApplicationIcon>
+    <AssemblyVersion>1.0.0.2</AssemblyVersion>
+    <FileVersion>1.0.0.2</FileVersion>
     <License>Apache-2.0</License>
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64;linux-x64;osx-x64;osx-arm64;linux-musl-x64;linux-musl-arm64;linux-arm64;linux-arm</RuntimeIdentifiers>
     <NoWarn>$(NoWarn);NETSDK1206</NoWarn>
+    <AssemblyName>Jokerge Launcher</AssemblyName>
+    <PackageId>Jokerge Launcher</PackageId>
+    <Version>1.0.0.2</Version>
+    <Authors>Darling Yoko</Authors>
+    <Description>Jokerge Launcher</Description>
+    <Company>Jokerge Launcher</Company>
+    <Product>Jokerge Launcher</Product>
+    <PackageIcon>Assets\Images\jokerge_icon.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -74,6 +82,9 @@
     </Compile>
     <Compile Update="Core\Services\SettingsService.cs">
       <DependentUpon>ISettingsService.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Core\Services\SkinUploadService.cs">
+      <DependentUpon>ISkinUploadService.cs</DependentUpon>
     </Compile>
   </ItemGroup>
 

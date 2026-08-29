@@ -187,9 +187,11 @@ public class SplashScreenViewModel : WindowViewModelBase
 
         var version = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(1, 0, 0, 0);
 
-        return actualVersion.Version.Equals(version.ToString())
-            ? (actualVersion, true)
-            : (actualVersion, false);
+        var isActual = Version.TryParse(actualVersion.Version?.Trim().TrimStart('v', 'V'), out var remoteVersion)
+            ? remoteVersion.Equals(version)
+            : actualVersion.Version == version.ToString();
+
+        return (actualVersion, isActual);
     }
 
     private void ChangeState(string text, bool isInfinity)

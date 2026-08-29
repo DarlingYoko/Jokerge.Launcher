@@ -27,6 +27,16 @@ public class SidebarComponent : TemplatedControl
         AvaloniaProperty.Register<SidebarComponent, ICommand>(
             nameof(HomeCommand));
 
+    public static readonly StyledProperty<string?> ProfileIconUrlProperty =
+        AvaloniaProperty.Register<SidebarComponent, string?>(
+            nameof(ProfileIconUrl));
+
+    public string? ProfileIconUrl
+    {
+        get => GetValue(ProfileIconUrlProperty);
+        set => SetValue(ProfileIconUrlProperty, value);
+    }
+
     public ICommand HomeCommand
     {
         get => GetValue(HomeCommandProperty);

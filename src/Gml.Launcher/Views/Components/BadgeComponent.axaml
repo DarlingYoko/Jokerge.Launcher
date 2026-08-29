@@ -10,7 +10,7 @@
     <Style Selector="controls|BadgeComponent">
 
         <Setter Property="BorderBrush" Value="{DynamicResource BadgeBorder}" />
-        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderThickness" Value="2" />
         <Setter Property="Padding" Value="10, 5" />
         <Setter Property="CornerRadius" Value="50" />
         <Setter Property="Foreground" Value="{DynamicResource ContentColor}" />

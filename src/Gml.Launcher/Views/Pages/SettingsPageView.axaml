@@ -14,30 +14,96 @@
     <Grid>
         <!-- Background -->
         <components:BackgroundComponent Grid.Column="0" />
-        <Border Padding="20">
-            <Grid ColumnDefinitions="350, 30, .6*, 30 0.2*" RowDefinitions="Auto, 30, *">
+
+        <Border Padding="50,30,50,30">
+            <Grid ColumnDefinitions="460, 40, *"
+                  RowDefinitions="Auto, 30, 190, *">
 
                 <!-- Navigation -->
-                <Grid Grid.ColumnSpan="3" Grid.Row="0">
+                <Grid Grid.ColumnSpan="3"
+                      Grid.Row="0">
                     <components:GmlButton Classes="TextIcon Additional"
-                                          Padding="15, 0, 20 ,0"
+                                          Padding="15, 0, 20, 0"
                                           IconPath="/Assets/Images/back.svg"
                                           IconSize="22"
                                           Text="{x:Static lang:Resources.Back}"
                                           Command="{Binding GoBackCommand}" />
                 </Grid>
 
-                <!-- Ram Block -->
-                <components:StackFrameBorder Grid.Row="2"
+                <!-- Installation directory / Game Path -->
+                <StackPanel Grid.Row="2"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="3"
+                            Spacing="20">
+
+                    <components:StackFrameBorder
+                        Spacing="10"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Stretch">
+
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0, -10, 0, 0"
+                                    Spacing="10">
+                            <Svg Path="/Assets/Images/folder.svg"
+                                 Width="28"
+                                 Height="28" />
+
+                            <TextBlock Text="{x:Static lang:Resources.InstallationDirectory}"
+                                       Margin="0"
+                                       Classes="HeadlineText" />
+                        </StackPanel>
+
+                        <Border Classes="Separator"
+                                Margin="0, 10" />
+
+                        <Grid Margin="0, 10, 0, 0"
+                              ColumnDefinitions="*, 15, Auto">
+
+                            <TextBox Grid.Column="0"
+                                     Classes="FormBox"
+                                     Text="{Binding InstallationFolder}" />
+
+                            <StackPanel Grid.Column="2"
+                                        Spacing="10"
+                                        Orientation="Horizontal">
+
+                                <components:GmlButton Classes="Icon Additional"
+                                                      IconPath="/Assets/Images/folder.svg"
+                                                      IconSize="22"
+                                                      HorizontalAlignment="Right"
+                                                      CornerRadius="10"
+                                                      Click="OpenLocation"
+                                                      Text="{x:Static lang:Resources.Edit}" />
+
+                                <components:GmlButton Classes="Icon Additional"
+                                                      IconPath="/Assets/Images/edit.svg"
+                                                      IconSize="22"
+                                                      HorizontalAlignment="Right"
+                                                      CornerRadius="10"
+                                                      Click="OpenFileDialog"
+                                                      Text="{x:Static lang:Resources.Edit}" />
+                            </StackPanel>
+
+                        </Grid>
+
+                    </components:StackFrameBorder>
+
+                </StackPanel>
+
+                <!-- RAM Block -->
+                <components:StackFrameBorder Grid.Row="3"
                                              Grid.Column="0"
                                              Spacing="10"
-                                             VerticalAlignment="Top">
+                                             VerticalAlignment="Top"
+                                             HorizontalAlignment="Stretch">
+
                     <StackPanel Orientation="Horizontal"
-                                Margin="0, 0, 0, 10"
+                                Margin="0, -10, 0, 10"
                                 Spacing="10">
                         <Svg Path="/Assets/Images/ram.svg"
                              Width="28"
                              Height="28" />
+
                         <TextBlock Text="{x:Static lang:Resources.SettingsRamTitle}"
                                    Classes="HeadlineText"
                                    Margin="0"
@@ -62,6 +128,7 @@
                             IsVisible="{Binding DynamicRamValue, Converter={converters:BoolReverseConverter}}" />
 
                     <StackPanel IsVisible="{Binding DynamicRamValue, Converter={converters:BoolReverseConverter}}">
+
                         <Slider Minimum="{Binding MinRamValue}"
                                 Maximum="{Binding MaxRamValue}"
                                 Value="{Binding RamValue}"
@@ -71,138 +138,102 @@
                                 Classes="FormSlider" />
 
                         <Grid Margin="0, -5, 0, 0">
-                            <!-- <TextBlock Text="ОЗУ" -->
-                            <!--            Classes="FormText" /> -->
+
                             <TextBlock Classes="FormText"
                                        FontSize="16"
                                        Foreground="{DynamicResource HeadlineColor}"
                                        HorizontalAlignment="Right">
+
                                 <Run Text="{Binding RamValueView}" />
+
                                 <Run Text="{x:Static lang:Resources.UnitMb}"
                                      FontSize="12"
                                      Foreground="{DynamicResource ContentColor}" />
+
                             </TextBlock>
+
                         </Grid>
+
                     </StackPanel>
 
                 </components:StackFrameBorder>
 
-                <StackPanel Grid.Row="2"
-                            Grid.Column="2"
-                            Spacing="20">
+                <!-- Game Window Size -->
+                <components:StackFrameBorder Grid.Row="3"
+                                             Grid.Column="2"
+                                             Spacing="10"
+                                             VerticalAlignment="Top"
+                                             HorizontalAlignment="Stretch">
 
-                    <!-- Game Window Size -->
-                    <components:StackFrameBorder
-                        Spacing="10"
-                        VerticalAlignment="Top">
+                    <StackPanel Orientation="Horizontal"
+                                Margin="0, -10, 50, 0"
+                                Spacing="10">
 
-                        <StackPanel Orientation="Horizontal"
-                                    Margin="0, 0, 0, 10"
-                                    Spacing="10">
-                            <Svg Path="/Assets/Images/window.svg"
-                                 Width="28"
-                                 Height="28" />
-                            <TextBlock Text="{x:Static lang:Resources.WindowSize}"
-                                       Margin="0"
-                                       Classes="HeadlineText" />
-                        </StackPanel>
+                        <Svg Path="/Assets/Images/window.svg"
+                             Width="28"
+                             Height="28" />
 
-                        <Border Classes="Separator" Margin="0, 10" />
+                        <TextBlock Text="{x:Static lang:Resources.WindowSize}"
+                                   Margin="0"
+                                   Classes="HeadlineText" />
 
-                        <CheckBox Content="{x:Static lang:Resources.FullScreen}"
-                                  Classes="FormCheckBox"
-                                  IsChecked="{Binding FullScreen}" />
+                    </StackPanel>
 
-                        <Border Classes="Separator" Margin="0, 10"
-                                IsVisible="{Binding FullScreen, Converter={converters:BoolReverseConverter}}" />
+                    <Border Classes="Separator"
+                            Margin="0, 10" />
 
-                        <Grid ColumnDefinitions="*, 10, Auto, 10, *"
-                              Margin="0, 10, 0, 0"
-                              IsVisible="{Binding FullScreen, Converter={converters:BoolReverseConverter}}">
-                            <TextBox Grid.Column="0"
-                                     Classes="FormBox"
-                                     Text="{Binding WindowWidth}"
-                                     TextChanged="OnTextInput" />
-                            <TextBlock Text="x"
-                                       Classes="FormText"
-                                       VerticalAlignment="Center"
-                                       Grid.Column="2" />
-                            <TextBox Grid.Column="4"
-                                     TextChanged="OnTextInput"
-                                     Text="{Binding WindowHeight}"
-                                     Classes="FormBox" />
-                        </Grid>
+                    <CheckBox Content="{x:Static lang:Resources.FullScreen}"
+                              Classes="FormCheckBox"
+                              IsChecked="{Binding FullScreen}" />
 
+                    <Border Classes="Separator"
+                            Margin="0, 10"
+                            IsVisible="{Binding FullScreen, Converter={converters:BoolReverseConverter}}" />
 
-                    </components:StackFrameBorder>
+                    <Grid ColumnDefinitions="*, 10, Auto, 10, *"
+                          Margin="0, 10, 0, 0"
+                          IsVisible="{Binding FullScreen, Converter={converters:BoolReverseConverter}}">
 
-                    <!-- Installation directory -->
-                    <components:StackFrameBorder
-                        Spacing="10"
-                        VerticalAlignment="Top">
+                        <TextBox Grid.Column="0"
+                                 Classes="FormBox"
+                                 Text="{Binding WindowWidth}"
+                                 TextChanged="OnTextInput" />
 
-                        <StackPanel Orientation="Horizontal"
-                                    Margin="0, 0, 0, 10"
-                                    Spacing="10">
-                            <Svg Path="/Assets/Images/folder.svg"
-                                 Width="28"
-                                 Height="28" />
-                            <TextBlock Text="{x:Static lang:Resources.InstallationDirectory}"
-                                       Margin="0"
-                                       Classes="HeadlineText" />
-                        </StackPanel>
+                        <TextBlock Text="x"
+                                   Classes="FormText"
+                                   VerticalAlignment="Center"
+                                   Grid.Column="2" />
 
-                        <Border Classes="Separator" Margin="0, 10" />
+                        <TextBox Grid.Column="4"
+                                 TextChanged="OnTextInput"
+                                 Text="{Binding WindowHeight}"
+                                 Classes="FormBox" />
 
-                        <Grid Margin="0, 10, 0, 0"
-                              ColumnDefinitions="*, 15, Auto">
-                            <TextBox Grid.Column="0"
-                                     Classes="FormBox"
-                                     Text="{Binding InstallationFolder}" />
+                    </Grid>
 
-                            <StackPanel Grid.Column="2" Spacing="10" Orientation="Horizontal">
-                                <components:GmlButton Classes="Icon Additional"
-                                                      IconPath="/Assets/Images/folder.svg"
-                                                      IconSize="22"
-                                                      HorizontalAlignment="Right"
-                                                      CornerRadius="10"
-                                                      Click="OpenLocation"
-                                                      Text="{x:Static lang:Resources.Edit}" />
-                                <components:GmlButton Classes="Icon Additional"
-                                                      IconPath="/Assets/Images/edit.svg"
-                                                      IconSize="22"
-                                                      HorizontalAlignment="Right"
-                                                      CornerRadius="10"
-                                                      Click="OpenFileDialog"
-                                                      Text="{x:Static lang:Resources.Edit}" />
-                            </StackPanel>
-
-                        </Grid>
-
-                    </components:StackFrameBorder>
-
-                </StackPanel>
+                </components:StackFrameBorder>
 
                 <!-- Language -->
-                <ComboBox Grid.Column="4"
-                          Grid.Row="2"
+                <ComboBox Grid.Column="2"
+                          Grid.Row="3"
                           Classes="ComboBoxStyle"
                           VerticalAlignment="Bottom"
                           HorizontalAlignment="Right"
                           ItemsSource="{Binding AvailableLanguages}"
                           SelectedItem="{Binding SelectedLanguage}">
+
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Spacing="10">
+                            <StackPanel Orientation="Horizontal"
+                                        Spacing="10">
                                 <Svg Path="{Binding IconPath}"
-                                     Width="18"/>
+                                     Width="18" />
                                 <TextBlock Text="{Binding Name}" />
                             </StackPanel>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
 
                 </ComboBox>
-
 
             </Grid>
         </Border>

@@ -40,7 +40,9 @@
                                                 Width="60"
                                                 Height="60"
                                                 IconPath="/Assets/Images/profile.svg"
-                                                IconSize="24" />
+                                                IconSize="24"
+                                                AvatarUrl="{TemplateBinding ProfileIconUrl}"
+                                                AvatarSize="28" />
 
                             <controls:ServerListComponent DataContext="{TemplateBinding ListViewModel}" />
 

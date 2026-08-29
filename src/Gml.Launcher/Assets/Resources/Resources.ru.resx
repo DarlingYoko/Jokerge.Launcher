@@ -156,6 +156,24 @@
   <data name="Cabinet" xml:space="preserve">
     <value>Личный кабинет</value>
   </data>
+  <data name="ChangeSkin" xml:space="preserve">
+    <value>Изменить скин</value>
+  </data>
+  <data name="ChangeCloak" xml:space="preserve">
+    <value>Изменить плащ</value>
+  </data>
+  <data name="SkinUploaded" xml:space="preserve">
+    <value>Скин успешно загружен</value>
+  </data>
+  <data name="CloakUploaded" xml:space="preserve">
+    <value>Плащ успешно загружен</value>
+  </data>
+  <data name="InvalidSkinFormat" xml:space="preserve">
+    <value>Неверный файл скина. Используйте PNG-изображение 64x64 или 64x32.</value>
+  </data>
+  <data name="InvalidCloakFormat" xml:space="preserve">
+    <value>Неверный файл плаща. Используйте PNG-изображение 64x32.</value>
+  </data>
   <data name="ProfileNotConfigured" xml:space="preserve">
     <value>Профиль не настроен, или не настроен сервис текстур, запуск текущего клиента не доступен</value>
   </data>

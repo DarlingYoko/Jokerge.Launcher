@@ -29,6 +29,25 @@ public abstract class SkinViewer
         return memoryStream.ToArray();
     }
 
+    public static byte[] GetHead(Stream skinStream, int size)
+    {
+        using var inputImage = Image.Load(skinStream);
+
+        var scaleFactor = inputImage.Width / 64;
+
+        var croppedImage = inputImage.Clone(ctx =>
+            ctx.Crop(new Rectangle(8 * scaleFactor, 8 * scaleFactor, 8 * scaleFactor, 8 * scaleFactor)));
+
+        var overlayImage = inputImage.Clone(ctx =>
+            ctx.Crop(new Rectangle(40 * scaleFactor, 8 * scaleFactor, 8 * scaleFactor, 8 * scaleFactor)));
+
+        croppedImage.Mutate(ctx => ctx.DrawImage(overlayImage, 1f));
+
+        var memoryStream = ResizeImage(size, inputImage, croppedImage);
+
+        return memoryStream.ToArray();
+    }
+
     private static int GetScaleSize(double size, int croppedImageWidth)
     {
         return Convert.ToInt32(Math.Round(size / croppedImageWidth));

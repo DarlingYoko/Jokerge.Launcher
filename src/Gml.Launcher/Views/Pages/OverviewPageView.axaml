@@ -50,25 +50,25 @@
                                         Speed="{Binding LoadingSpeed}" />
 
                 <!-- News -->
-                <Grid RowDefinitions="Auto, 0, *" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="2">
-                    <TextBlock Classes="HeadlineText" Text="{x:Static lang:Resources.News}"/>
-                    <ScrollViewer Grid.Row="2" CornerRadius="10" ClipToBounds="True">
-                        <ItemsControl ItemsSource="{Binding News}">
-                            <ItemsControl.DataTemplates>
-                                <DataTemplate x:DataType="news:NewsReadDto">
-
-                                    <components:NewsComponent Title="{Binding Title}"
-                                                              Description="{Binding Content}"
-                                                              Date="{Binding Date}"
-                                                              Margin="0, 0, 0, 10"/>
-                                </DataTemplate>
-                            </ItemsControl.DataTemplates>
-                        </ItemsControl>
-                    </ScrollViewer>
-                </Grid>
+                <!-- <Grid RowDefinitions="Auto, 0, *" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="2"> -->
+                <!--     <TextBlock Classes="HeadlineText" Text="{x:Static lang:Resources.News}"/> -->
+                <!--     <ScrollViewer Grid.Row="2" CornerRadius="10" ClipToBounds="True"> -->
+                <!--         <ItemsControl ItemsSource="{Binding News}"> -->
+                <!--             <ItemsControl.DataTemplates> -->
+                <!--                 <DataTemplate x:DataType="news:NewsReadDto"> -->
+                <!-- -->
+                <!--                     <components:NewsComponent Title="{Binding Title}" -->
+                <!--                                               Description="{Binding Content}" -->
+                <!--                                               Date="{Binding Date}" -->
+                <!--                                               Margin="0, 0, 0, 10"/> -->
+                <!--                 </DataTemplate> -->
+                <!--             </ItemsControl.DataTemplates> -->
+                <!--         </ItemsControl> -->
+                <!--     </ScrollViewer> -->
+                <!-- </Grid> -->
 
                 <!-- Server Info -->
-                <components:ServerInfo Grid.Column="0"
+                <components:ServerInfo Grid.Column="2"
                                        Grid.Row="2"
                                        Classes.Animated="{Binding ListViewModel.HasSelectedItem}"
                                        PlayCommand="{Binding PlayCommand}"
@@ -90,42 +90,42 @@
                                        HorizontalAlignment="Left" />
 
                 <!-- Footer -->
-                <Grid Grid.Row="4"
-                      Grid.Column="0"
-                      Grid.ColumnSpan="3"
-                      ColumnDefinitions="Auto, *, Auto">
-
-                    <components:GmlButton Grid.Column="0"
-                                          IconPath="/Assets/Images/document.svg"
-                                          Command="{Binding OpenLinkCommand}"
-                                          CommandParameter="https://vk.com/recloud.studio"
-                                          IconSize="22"
-                                          Classes="TextIcon Additional"
-                                          Text="{x:Static lang:Resources.ModsList}" />
-
-                    <StackPanel Grid.Column="2"
-                                Orientation="Horizontal"
-                                Spacing="10">
-
-                        <components:GmlButton IconPath="/Assets/Images/vk.svg"
-                                              IconSize="24"
-                                              Padding="0, 2, 0, 0"
-                                              Command="{Binding OpenLinkCommand}"
-                                              CommandParameter="https://vk.com/recloud.studio"
-                                              Classes="Icon Additional"
-                                              Text="{x:Static lang:Resources.Website}" />
-
-                        <components:GmlButton IconPath="/Assets/Images/app.svg"
-                                              IconSize="22"
-                                              Command="{Binding OpenLinkCommand}"
-                                              CommandParameter="https://recloud.tech"
-                                              Padding="15, 0, 15, 0"
-                                              Classes="TextIcon Additional"
-                                              Text="{x:Static lang:Resources.Website}" />
-
-                    </StackPanel>
-
-                </Grid>
+                <!-- <Grid Grid.Row="4" -->
+                <!--       Grid.Column="0" -->
+                <!--       Grid.ColumnSpan="3" -->
+                <!--       ColumnDefinitions="Auto, *, Auto"> -->
+                <!-- -->
+                <!--     <components:GmlButton Grid.Column="0" -->
+                <!--                           IconPath="/Assets/Images/document.svg" -->
+                <!--                           Command="{Binding OpenLinkCommand}" -->
+                <!--                           CommandParameter="https://vk.com/recloud.studio" -->
+                <!--                           IconSize="22" -->
+                <!--                           Classes="TextIcon Additional" -->
+                <!--                           Text="{x:Static lang:Resources.ModsList}" /> -->
+                <!-- -->
+                <!--     <StackPanel Grid.Column="2" -->
+                <!--                 Orientation="Horizontal" -->
+                <!--                 Spacing="10"> -->
+                <!--      -->
+                <!--         <components:GmlButton IconPath="/Assets/Images/vk.svg" -->
+                <!--                               IconSize="24" -->
+                <!--                               Padding="0, 2, 0, 0" -->
+                <!--                               Command="{Binding OpenLinkCommand}" -->
+                <!--                               CommandParameter="https://vk.com/recloud.studio" -->
+                <!--                               Classes="Icon Additional" -->
+                <!--                               Text="{x:Static lang:Resources.Website}" /> -->
+                <!--      -->
+                <!--         <components:GmlButton IconPath="/Assets/Images/app.svg" -->
+                <!--                               IconSize="22" -->
+                <!--                               Command="{Binding OpenLinkCommand}" -->
+                <!--                               CommandParameter="https://recloud.tech" -->
+                <!--                               Padding="15, 0, 15, 0" -->
+                <!--                               Classes="TextIcon Additional" -->
+                <!--                               Text="{x:Static lang:Resources.Website}" /> -->
+                <!--      -->
+                <!--     </StackPanel> -->
+                <!-- -->
+                <!-- </Grid> -->
 
             </Grid>
 
@@ -137,7 +137,9 @@
                                      LogoutCommand="{Binding LogoutCommand}"
                                      HomeCommand="{Binding HomeCommand}"
                                      IsBackendInactive="{Binding BackendIsActive}"
-                                     ProfileCommand="{Binding GoProfileCommand}" />
+                                     ProfileCommand="{Binding GoProfileCommand}"
+                                     ProfileIconUrl="{Binding TextureUrl}"
+                                     />
 
     </Grid>
 

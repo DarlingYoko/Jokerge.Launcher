@@ -15,9 +15,9 @@
         <!-- Set Defaults -->
         <Setter Property="Template">
             <ControlTemplate>
-                <Svg Path="/Assets/Images/logo.svg"
-                     Width="{TemplateBinding Size}"
-                     Height="{TemplateBinding Size}" />
+                <Image Source="/Assets/Images/jokerge_icon.png"
+                       Width="{TemplateBinding Size}"
+                       Height="{TemplateBinding Size}" />
             </ControlTemplate>
         </Setter>
     </Style>
@@ -28,10 +28,10 @@
             <ControlTemplate>
                 <StackPanel Orientation="Horizontal"
                             Spacing="15">
-                    <Svg Path="/Assets/Images/logo.svg"
-                         Width="{TemplateBinding Size}"
-                         Height="{TemplateBinding Size}" />
-                    <TextBlock Text="GAMERVII"
+                    <Image Source="/Assets/Images/jokerge_icon.png"
+                           Width="{TemplateBinding Size}"
+                           Height="{TemplateBinding Size}" />
+                    <TextBlock Text="Launcher"
                                VerticalAlignment="Center"
                                FontSize="26"
                                FontWeight="Bold"

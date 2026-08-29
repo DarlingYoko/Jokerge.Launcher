@@ -237,6 +237,8 @@ public class OverviewPageViewModel : PageViewModelBase
 
     [Reactive] public ObservableCollection<NewsReadDto> News { get; set; } = [];
 
+    [Reactive] public string? TextureUrl { get; set; }
+
     private async void LoadProfilesAsync(bool eventInfo)
     {
         await LoadProfiles();
@@ -488,6 +490,7 @@ public class OverviewPageViewModel : PageViewModelBase
 
             if (!_backendChecker.IsOffline)
             {
+                await LoadUserTexture();
                 await _gmlManager.LoadDiscordRpc();
                 await _gmlManager.UpdateDiscordRpcState(
                     LocalizationService.GetString(SystemConstants.DefaultDRpcText));
@@ -504,6 +507,19 @@ public class OverviewPageViewModel : PageViewModelBase
             SentrySdk.CaptureException(exception);
             Console.WriteLine(exception);
             await Reconnect();
+        }
+        catch (Exception exception)
+        {
+            SentrySdk.CaptureException(exception);
+        }
+    }
+
+    private async Task LoadUserTexture()
+    {
+        try
+        {
+            var userTextureInfo = await _gmlManager.GetTexturesByName(User.Name);
+            TextureUrl = userTextureInfo?.FullSkinUrl;
         }
         catch (Exception exception)
         {

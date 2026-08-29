@@ -124,6 +124,60 @@ namespace Gml.Launcher.Assets.Resources {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to Change skin.
+        /// </summary>
+        public static string ChangeSkin {
+            get {
+                return ResourceManager.GetString("ChangeSkin", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Change cloak.
+        /// </summary>
+        public static string ChangeCloak {
+            get {
+                return ResourceManager.GetString("ChangeCloak", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Skin uploaded successfully.
+        /// </summary>
+        public static string SkinUploaded {
+            get {
+                return ResourceManager.GetString("SkinUploaded", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Cloak uploaded successfully.
+        /// </summary>
+        public static string CloakUploaded {
+            get {
+                return ResourceManager.GetString("CloakUploaded", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid skin file..
+        /// </summary>
+        public static string InvalidSkinFormat {
+            get {
+                return ResourceManager.GetString("InvalidSkinFormat", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid cloak file..
+        /// </summary>
+        public static string InvalidCloakFormat {
+            get {
+                return ResourceManager.GetString("InvalidCloakFormat", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Check the server.
         /// </summary>
         public static string CheckBackendButton {

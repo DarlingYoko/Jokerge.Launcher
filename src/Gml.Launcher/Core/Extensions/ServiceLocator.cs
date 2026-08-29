@@ -40,6 +40,7 @@ public static class ServiceLocator
             ),
             typeof(ISettingsService)
         );
+        Locator.CurrentMutable.RegisterConstant(new SkinUploadService(manager), typeof(ISkinUploadService));
 
         AppDomain.CurrentDomain.UnhandledException += (_, args) =>
         {

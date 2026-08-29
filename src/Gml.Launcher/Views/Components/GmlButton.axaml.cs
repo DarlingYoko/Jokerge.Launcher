@@ -17,6 +17,12 @@ public class GmlButton : TemplatedControl
     public static readonly StyledProperty<Uri> IconPathProperty = AvaloniaProperty.Register<GmlButton, Uri>(
         nameof(IconPath));
 
+    public static readonly StyledProperty<string?> AvatarUrlProperty = AvaloniaProperty.Register<GmlButton, string?>(
+        nameof(AvatarUrl));
+
+    public static readonly StyledProperty<double> AvatarSizeProperty = AvaloniaProperty.Register<GmlButton, double>(
+        nameof(AvatarSize), 32);
+
     public static readonly StyledProperty<double> IconSizeProperty = AvaloniaProperty.Register<GmlButton, double>(
         nameof(IconSize), 16);
 
@@ -85,6 +91,18 @@ public class GmlButton : TemplatedControl
     {
         get => GetValue(IconPathProperty);
         set => SetValue(IconPathProperty, value);
+    }
+
+    public string? AvatarUrl
+    {
+        get => GetValue(AvatarUrlProperty);
+        set => SetValue(AvatarUrlProperty, value);
+    }
+
+    public double AvatarSize
+    {
+        get => GetValue(AvatarSizeProperty);
+        set => SetValue(AvatarSizeProperty, value);
     }
 
     public event EventHandler<RoutedEventArgs>? Click

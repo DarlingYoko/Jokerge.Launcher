@@ -159,6 +159,24 @@
   <data name="ProfileNotConfigured" xml:space="preserve">
     <value>Profile not configured</value>
   </data>
+  <data name="ChangeSkin" xml:space="preserve">
+    <value>Change skin</value>
+  </data>
+  <data name="ChangeCloak" xml:space="preserve">
+    <value>Change cloak</value>
+  </data>
+  <data name="SkinUploaded" xml:space="preserve">
+    <value>Skin uploaded successfully</value>
+  </data>
+  <data name="CloakUploaded" xml:space="preserve">
+    <value>Cloak uploaded successfully</value>
+  </data>
+  <data name="InvalidSkinFormat" xml:space="preserve">
+    <value>Invalid skin file. Use a 64x64 or 64x32 PNG image.</value>
+  </data>
+  <data name="InvalidCloakFormat" xml:space="preserve">
+    <value>Invalid cloak file. Use a 64x32 PNG image.</value>
+  </data>
   <data name="SettingsRamTitle" xml:space="preserve">
     <value>Settings RAM</value>
   </data>

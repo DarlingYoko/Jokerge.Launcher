@@ -53,4 +53,10 @@ public class SystemConstants
     public const string NewsOffline = "NewsOffline";
     public const string NewsEmptyTitle = "NewsEmptyTitle";
     public const string NewsEmptyContent = "NewsEmptyContent";
+    public const string ChangeSkin = "ChangeSkin";
+    public const string ChangeCloak = "ChangeCloak";
+    public const string SkinUploaded = "SkinUploaded";
+    public const string CloakUploaded = "CloakUploaded";
+    public const string InvalidSkinFormat = "InvalidSkinFormat";
+    public const string InvalidCloakFormat = "InvalidCloakFormat";
 }

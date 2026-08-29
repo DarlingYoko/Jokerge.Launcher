@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
@@ -16,17 +15,14 @@ using Sentry;
 
 namespace Gml.Launcher.Core.Converters;
 
-public class AsyncSkinRenderLoader
+public class AsyncSkinHeadLoader
 {
-    public static readonly AttachedProperty<string> SourceProperty =
-        AvaloniaProperty.RegisterAttached<AsyncSkinRenderLoader, Image, string>("Source");
-
-    private static readonly AttachedProperty<bool> IsLoadingProperty =
-        AvaloniaProperty.RegisterAttached<AsyncSkinRenderLoader, Image, bool>("IsLoading");
+    public static readonly AttachedProperty<string?> SourceProperty =
+        AvaloniaProperty.RegisterAttached<AsyncSkinHeadLoader, Image, string?>("Source");
 
     private static readonly ConcurrentDictionary<Image, CancellationTokenSource> PendingOperations = new();
 
-    static AsyncSkinRenderLoader()
+    static AsyncSkinHeadLoader()
     {
         SourceProperty.Changed.AddClassHandler<Image>(OnSourceChanged);
     }
@@ -38,7 +34,6 @@ public class AsyncSkinRenderLoader
 
     private static async Task TryLoadImage(Image sender, AvaloniaPropertyChangedEventArgs args, int attempt)
     {
-        SetIsLoading(sender, true);
         var cts = PendingOperations.AddOrUpdate(
             sender,
             new CancellationTokenSource(),
@@ -48,19 +43,16 @@ public class AsyncSkinRenderLoader
                 return new CancellationTokenSource();
             });
 
-        var url = args.GetNewValue<string>();
+        var url = args.GetNewValue<string?>();
 
         try
         {
-            if (string.IsNullOrEmpty(url))
+            if (string.IsNullOrEmpty(url) || !ValidateUrl(url))
             {
                 PendingOperations.TryRemove(sender, out _);
-                sender.Source = null;
+                Dispatcher.UIThread.Invoke(() => sender.Source = null);
                 return;
             }
-
-            if (string.IsNullOrEmpty(url) || !ValidateUrl(url))
-                throw new Exception($"User skin not found for user. Url: {url}");
 
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Clear();
@@ -69,7 +61,7 @@ public class AsyncSkinRenderLoader
             var response = await client.GetByteArrayAsync(url, cts.Token);
             using var stream = new MemoryStream(response);
 
-            var bitmap = new Bitmap(new MemoryStream(SkinViewer.GetFront(stream, 128)));
+            var bitmap = new Bitmap(new MemoryStream(SkinViewer.GetHead(stream, 64)));
 
             Dispatcher.UIThread.Invoke(() =>
             {
@@ -78,7 +70,7 @@ public class AsyncSkinRenderLoader
         }
         catch (HttpRequestException exception)
         {
-            Debug.WriteLine($"Texture load attempt: {attempt}, reason: {exception.Message}, {url}");
+            Debug.WriteLine($"Head texture load attempt: {attempt}, reason: {exception.Message}, {url}");
             if (attempt < 3)
             {
                 await Task.Delay(TimeSpan.FromSeconds(2));
@@ -94,7 +86,6 @@ public class AsyncSkinRenderLoader
         finally
         {
             PendingOperations.TryRemove(sender, out _);
-            SetIsLoading(sender, false);
         }
     }
 
@@ -104,23 +95,13 @@ public class AsyncSkinRenderLoader
                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
     }
 
-    public static void SetSource(Image obj, string value)
+    public static void SetSource(Image obj, string? value)
     {
         obj.SetValue(SourceProperty, value);
     }
 
-    public static string GetSource(Image obj)
+    public static string? GetSource(Image obj)
     {
         return obj.GetValue(SourceProperty);
-    }
-
-    private static void SetIsLoading(Image obj, bool value)
-    {
-        Dispatcher.UIThread.Invoke(() => { obj.SetValue(IsLoadingProperty, value); });
-    }
-
-    public static bool GetIsLoading(Image obj)
-    {
-        return obj.GetValue(IsLoadingProperty);
     }
 }
