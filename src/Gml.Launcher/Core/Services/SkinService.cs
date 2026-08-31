@@ -31,7 +31,8 @@ public abstract class SkinViewer
 
     public static byte[] GetHead(Stream skinStream, int size)
     {
-        using var inputImage = Image.Load(skinStream);
+        using var rawImage = Image.Load(skinStream);
+        using var inputImage = NormalizeSkin(rawImage);
 
         var scaleFactor = inputImage.Width / 64;
 
@@ -53,6 +54,22 @@ public abstract class SkinViewer
         return Convert.ToInt32(Math.Round(size / croppedImageWidth));
     }
 
+    // Skin.Service allows HD skins that aren't an exact multiple of 64px wide; Minecraft's
+    // GPU texture mapping tolerates that, but the fixed-grid crops below don't (a width < 64
+    // divides to a zero scale factor, a non-multiple width crops out of bounds). Stretch to
+    // the nearest canonical skin grid first so every crop stays in-bounds.
+    private static Image NormalizeSkin(Image inputImage)
+    {
+        var scale = Math.Max(1, (int)Math.Round(inputImage.Width / 64.0));
+        var targetWidth = scale * 64;
+        var targetHeight = inputImage.Height * 2 <= inputImage.Width ? scale * 32 : scale * 64;
+
+        if (inputImage.Width == targetWidth && inputImage.Height == targetHeight)
+            return inputImage.Clone(_ => { });
+
+        return inputImage.Clone(ctx => ctx.Resize(targetWidth, targetHeight, KnownResamplers.NearestNeighbor));
+    }
+
     public static byte[] GetCloak(string cloakPath, int size)
     {
         using var inputImage = Image.Load(cloakPath);
@@ -69,7 +86,8 @@ public abstract class SkinViewer
 
     public static byte[] GetFront(Stream skinStream, int size)
     {
-        using var inputImage = Image.Load(skinStream);
+        using var rawImage = Image.Load(skinStream);
+        using var inputImage = NormalizeSkin(rawImage);
 
         var scaleFactor = inputImage.Width / 64;
         var extendedSkin = inputImage.Height / scaleFactor >= 64;
