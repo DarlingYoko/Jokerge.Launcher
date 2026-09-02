@@ -91,11 +91,15 @@ public static class ServiceLocator
     private static GmlClientManager RegisterGmlManager(SystemService systemService, string installationDirectory,
         string[] arguments)
     {
-        var gateWay = GmlClientManager.CheckApiStatus(ResourceKeysDictionary.Host, ResourceKeysDictionary.SecondaryHost);
-
+        // Deliberately skip GmlClientManager.CheckApiStatus's ping + blocking HTTP probe here: this
+        // method runs synchronously inside BuildAvaloniaApp, before Avalonia's desktop lifetime (and
+        // therefore any window, including the splash screen) has started — so blocking on it froze
+        // the app with no window at all for as long as the backend took to respond (or timed out).
+        // Backend reachability is already checked asynchronously, with the splash screen visible, by
+        // SplashScreenViewModel.InitializeAsync -> IBackendChecker.UpdateBackendStatus.
         var manager = new GmlClientManager(
             installationDirectory,
-            gateWay,
+            ResourceKeysDictionary.Host,
             new GameLoader(),
             ResourceKeysDictionary.FolderName,
             systemService.GetOsType());
