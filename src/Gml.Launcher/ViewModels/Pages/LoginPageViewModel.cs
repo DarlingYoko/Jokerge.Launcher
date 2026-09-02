@@ -104,12 +104,23 @@ public class LoginPageViewModel : PageViewModelBase
 
     private async void CheckAuth()
     {
-        var authUser = await _storageService.GetAsync<AuthLauncherUser>(StorageConstants.User);
-
-        if (authUser is { IsAuth: true } && authUser.ExpiredDate > DateTime.Now)
+        try
         {
-            _screen.Router.Navigate.Execute(new OverviewPageViewModel(_screen, authUser, _onClosed));
-            await _gmlClientManager.OpenServerConnection(authUser);
+            var authUser = await _storageService.GetAsync<AuthLauncherUser>(StorageConstants.User);
+
+            if (authUser is { IsAuth: true } && authUser.ExpiredDate > DateTime.Now)
+            {
+                // Confirm the server connection before navigating away from Login, so a failure here
+                // leaves the user able to retry instead of stranded on a half-connected Overview page.
+                await _gmlClientManager.OpenServerConnection(authUser);
+                _screen.Router.Navigate.Execute(new OverviewPageViewModel(_screen, authUser, _onClosed));
+            }
+        }
+        catch (Exception exception)
+        {
+            Debug.WriteLine($"Auto-login failed: {exception}");
+            SentrySdk.CaptureException(exception);
+            ShowError(SystemConstants.InvalidAuthData, exception.Message);
         }
     }
 
