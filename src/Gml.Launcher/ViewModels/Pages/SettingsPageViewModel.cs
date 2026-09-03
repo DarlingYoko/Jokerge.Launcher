@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using System.Reflection;
 using Gml.Client;
 using Gml.Client.Interfaces;
 using Gml.Launcher.Assets.Resources;
@@ -150,6 +151,9 @@ public class SettingsPageViewModel : PageViewModelBase
 
     [Reactive] public ObservableCollection<Language> AvailableLanguages { get; set; } = [];
     public MainWindowViewModel MainViewModel { get; }
+
+    public string LauncherVersion { get; } =
+        "v" + (Assembly.GetExecutingAssembly().GetName().Version ?? new Version(1, 0, 0, 0));
 
     private void ChangeLanguage(Language? language)
     {

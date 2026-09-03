@@ -28,6 +28,12 @@
                                           IconSize="22"
                                           Text="{x:Static lang:Resources.Back}"
                                           Command="{Binding GoBackCommand}" />
+
+                    <components:BadgeComponent Text="{Binding LauncherVersion}"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Center"
+                                               FontSize="14"
+                                               FontWeight="Bold" />
                 </Grid>
 
                 <!-- Installation directory / Game Path -->
