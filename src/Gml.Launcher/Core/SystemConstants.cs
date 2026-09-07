@@ -57,6 +57,10 @@ public class SystemConstants
     public const string ChangeCloak = "ChangeCloak";
     public const string SkinUploaded = "SkinUploaded";
     public const string CloakUploaded = "CloakUploaded";
+    public const string ResetSkin = "ResetSkin";
+    public const string ResetCloak = "ResetCloak";
+    public const string SkinReset = "SkinReset";
+    public const string CloakReset = "CloakReset";
     public const string InvalidSkinFormat = "InvalidSkinFormat";
     public const string InvalidCloakFormat = "InvalidCloakFormat";
 }

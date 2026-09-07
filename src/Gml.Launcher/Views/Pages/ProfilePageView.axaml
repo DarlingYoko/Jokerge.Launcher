@@ -60,10 +60,28 @@
                             <components:GmlButton Classes="Icon Additional"
                                                   Margin="0, 0, 0, 0"
                                                   IsEnabled="{Binding !IsUploading}"
+                                                  Command="{Binding ResetSkinCommand}"
+                                                  IconPath="/Assets/Images/download.svg"
+                                                  Text="{x:Static lang:Resources.ResetSkin}"
+                                                  ToolTip.Tip="{x:Static lang:Resources.ResetSkin}"
+                                                  HorizontalAlignment="Center" />
+
+                            <components:GmlButton Classes="Icon Additional"
+                                                  Margin="0, 0, 0, 0"
+                                                  IsEnabled="{Binding !IsUploading}"
                                                   Click="OnChangeCloakClick"
                                                   IconPath="/Assets/Images/document.svg"
                                                   Text="{x:Static lang:Resources.ChangeCloak}"
                                                   ToolTip.Tip="{x:Static lang:Resources.ChangeCloak}"
+                                                  HorizontalAlignment="Center" />
+
+                            <components:GmlButton Classes="Icon Additional"
+                                                  Margin="0, 0, 0, 0"
+                                                  IsEnabled="{Binding !IsUploading}"
+                                                  Command="{Binding ResetCloakCommand}"
+                                                  IconPath="/Assets/Images/download.svg"
+                                                  Text="{x:Static lang:Resources.ResetCloak}"
+                                                  ToolTip.Tip="{x:Static lang:Resources.ResetCloak}"
                                                   HorizontalAlignment="Center" />
 
 

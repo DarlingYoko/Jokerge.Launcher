@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,6 +30,8 @@ public class ProfilePageViewModel : PageViewModelBase
     [Reactive] public string TextureUrl { get; set; }
     [Reactive] public ILauncherUser LauncherUser { get; set; }
     [Reactive] public bool IsUploading { get; set; }
+    public ReactiveCommand<Unit, Unit> ResetSkinCommand { get; }
+    public ReactiveCommand<Unit, Unit> ResetCloakCommand { get; }
     internal ProfilePageViewModel(
         IScreen screen,
         ILauncherUser launcherUser,
@@ -42,6 +45,9 @@ public class ProfilePageViewModel : PageViewModelBase
         _skinUploadService = skinUploadService
                               ?? Locator.Current.GetService<ISkinUploadService>()
                               ?? throw new ServiceNotFoundException(typeof(ISkinUploadService));
+
+        ResetSkinCommand = ReactiveCommand.CreateFromTask(() => ResetTextureAsync(true));
+        ResetCloakCommand = ReactiveCommand.CreateFromTask(() => ResetTextureAsync(false));
 
         RxApp.TaskpoolScheduler.Schedule(LoadData);
     }
@@ -112,6 +118,42 @@ public class ProfilePageViewModel : PageViewModelBase
                 LoadData();
                 ShowSuccess(SystemConstants.Success,
                     LocalizationService.GetString(isSkin ? SystemConstants.SkinUploaded : SystemConstants.CloakUploaded));
+            }
+            else
+            {
+                ShowError(SystemConstants.Error, error ?? LocalizationService.GetString(SystemConstants.Error));
+            }
+        }
+        catch (Exception exception)
+        {
+            SentrySdk.CaptureException(exception);
+            ShowError(SystemConstants.Error, LocalizationService.GetString(SystemConstants.Error));
+        }
+        finally
+        {
+            IsUploading = false;
+        }
+    }
+
+    private async Task ResetTextureAsync(bool isSkin)
+    {
+        if (IsUploading) return;
+
+        IsUploading = true;
+
+        try
+        {
+            var (isSuccess, error) = isSkin
+                ? await _skinUploadService.ResetSkinAsync(LauncherUser.Name, LauncherUser.AccessToken,
+                    CancellationToken.None)
+                : await _skinUploadService.ResetCloakAsync(LauncherUser.Name, LauncherUser.AccessToken,
+                    CancellationToken.None);
+
+            if (isSuccess)
+            {
+                LoadData();
+                ShowSuccess(SystemConstants.Success,
+                    LocalizationService.GetString(isSkin ? SystemConstants.SkinReset : SystemConstants.CloakReset));
             }
             else
             {

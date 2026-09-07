@@ -168,6 +168,18 @@
   <data name="CloakUploaded" xml:space="preserve">
     <value>Плащ успешно загружен</value>
   </data>
+  <data name="ResetSkin" xml:space="preserve">
+    <value>Сбросить скин</value>
+  </data>
+  <data name="ResetCloak" xml:space="preserve">
+    <value>Сбросить плащ</value>
+  </data>
+  <data name="SkinReset" xml:space="preserve">
+    <value>Скин сброшен на стандартный</value>
+  </data>
+  <data name="CloakReset" xml:space="preserve">
+    <value>Плащ удален</value>
+  </data>
   <data name="InvalidSkinFormat" xml:space="preserve">
     <value>Неверный файл скина. Используйте PNG-изображение 64x64 или 64x32.</value>
   </data>
