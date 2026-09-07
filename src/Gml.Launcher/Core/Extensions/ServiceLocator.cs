@@ -30,6 +30,10 @@ public static class ServiceLocator
         var manager = RegisterGmlManager(systemService, installationDirectory, arguments);
         var storageService = RegisterStorage();
 
+        var fileSyncLogService = new FileSyncLogService(manager);
+        Locator.CurrentMutable.RegisterConstant(fileSyncLogService, typeof(IFileSyncLogService));
+        manager.FilesSynced.Subscribe(fileSyncLogService.LogSync);
+
         CheckAndChangeInstallationFolder(storageService, manager);
         CheckAndChangeLanguage(storageService, systemService);
         Locator.CurrentMutable.RegisterConstant(new VpnChecker(), typeof(IVpnChecker));
