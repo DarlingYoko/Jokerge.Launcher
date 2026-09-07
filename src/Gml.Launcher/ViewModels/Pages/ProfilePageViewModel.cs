@@ -30,8 +30,7 @@ public class ProfilePageViewModel : PageViewModelBase
     [Reactive] public string TextureUrl { get; set; }
     [Reactive] public ILauncherUser LauncherUser { get; set; }
     [Reactive] public bool IsUploading { get; set; }
-    public ReactiveCommand<Unit, Unit> ResetSkinCommand { get; }
-    public ReactiveCommand<Unit, Unit> ResetCloakCommand { get; }
+    public ReactiveCommand<Unit, Unit> ResetCommand { get; }
     internal ProfilePageViewModel(
         IScreen screen,
         ILauncherUser launcherUser,
@@ -46,8 +45,7 @@ public class ProfilePageViewModel : PageViewModelBase
                               ?? Locator.Current.GetService<ISkinUploadService>()
                               ?? throw new ServiceNotFoundException(typeof(ISkinUploadService));
 
-        ResetSkinCommand = ReactiveCommand.CreateFromTask(() => ResetTextureAsync(true));
-        ResetCloakCommand = ReactiveCommand.CreateFromTask(() => ResetTextureAsync(false));
+        ResetCommand = ReactiveCommand.CreateFromTask(ResetTextureAsync);
 
         RxApp.TaskpoolScheduler.Schedule(LoadData);
     }
@@ -135,7 +133,7 @@ public class ProfilePageViewModel : PageViewModelBase
         }
     }
 
-    private async Task ResetTextureAsync(bool isSkin)
+    private async Task ResetTextureAsync()
     {
         if (IsUploading) return;
 
@@ -143,21 +141,25 @@ public class ProfilePageViewModel : PageViewModelBase
 
         try
         {
-            var (isSuccess, error) = isSkin
-                ? await _skinUploadService.ResetSkinAsync(LauncherUser.Name, LauncherUser.AccessToken,
-                    CancellationToken.None)
-                : await _skinUploadService.ResetCloakAsync(LauncherUser.Name, LauncherUser.AccessToken,
-                    CancellationToken.None);
+            var skinTask = _skinUploadService.ResetSkinAsync(LauncherUser.Name, LauncherUser.AccessToken,
+                CancellationToken.None);
+            var cloakTask = _skinUploadService.ResetCloakAsync(LauncherUser.Name, LauncherUser.AccessToken,
+                CancellationToken.None);
 
-            if (isSuccess)
+            await Task.WhenAll(skinTask, cloakTask);
+
+            var (skinSuccess, skinError) = skinTask.Result;
+            var (cloakSuccess, cloakError) = cloakTask.Result;
+
+            if (skinSuccess && cloakSuccess)
             {
                 LoadData();
-                ShowSuccess(SystemConstants.Success,
-                    LocalizationService.GetString(isSkin ? SystemConstants.SkinReset : SystemConstants.CloakReset));
+                ShowSuccess(SystemConstants.Success, LocalizationService.GetString(SystemConstants.TextureReset));
             }
             else
             {
-                ShowError(SystemConstants.Error, error ?? LocalizationService.GetString(SystemConstants.Error));
+                var error = skinError ?? cloakError ?? LocalizationService.GetString(SystemConstants.Error);
+                ShowError(SystemConstants.Error, error);
             }
         }
         catch (Exception exception)

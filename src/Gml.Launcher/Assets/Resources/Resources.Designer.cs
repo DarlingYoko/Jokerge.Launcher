@@ -160,38 +160,20 @@ namespace Gml.Launcher.Assets.Resources {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Reset skin.
+        ///   Looks up a localized string similar to Reset to default.
         /// </summary>
-        public static string ResetSkin {
+        public static string Reset {
             get {
-                return ResourceManager.GetString("ResetSkin", resourceCulture);
+                return ResourceManager.GetString("Reset", resourceCulture);
             }
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Reset cloak.
+        ///   Looks up a localized string similar to Skin and cloak reset to default.
         /// </summary>
-        public static string ResetCloak {
+        public static string TextureReset {
             get {
-                return ResourceManager.GetString("ResetCloak", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Skin reset to default.
-        /// </summary>
-        public static string SkinReset {
-            get {
-                return ResourceManager.GetString("SkinReset", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Cloak removed.
-        /// </summary>
-        public static string CloakReset {
-            get {
-                return ResourceManager.GetString("CloakReset", resourceCulture);
+                return ResourceManager.GetString("TextureReset", resourceCulture);
             }
         }
 

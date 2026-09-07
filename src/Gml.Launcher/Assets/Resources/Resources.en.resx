@@ -171,17 +171,11 @@
   <data name="CloakUploaded" xml:space="preserve">
     <value>Cloak uploaded successfully</value>
   </data>
-  <data name="ResetSkin" xml:space="preserve">
-    <value>Reset skin</value>
+  <data name="Reset" xml:space="preserve">
+    <value>Reset to default</value>
   </data>
-  <data name="ResetCloak" xml:space="preserve">
-    <value>Reset cloak</value>
-  </data>
-  <data name="SkinReset" xml:space="preserve">
-    <value>Skin reset to default</value>
-  </data>
-  <data name="CloakReset" xml:space="preserve">
-    <value>Cloak removed</value>
+  <data name="TextureReset" xml:space="preserve">
+    <value>Skin and cloak reset to default</value>
   </data>
   <data name="InvalidSkinFormat" xml:space="preserve">
     <value>Invalid skin file. Use a 64x64 or 64x32 PNG image.</value>

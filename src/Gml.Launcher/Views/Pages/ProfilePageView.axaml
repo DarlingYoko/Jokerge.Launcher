@@ -60,15 +60,6 @@
                             <components:GmlButton Classes="Icon Additional"
                                                   Margin="0, 0, 0, 0"
                                                   IsEnabled="{Binding !IsUploading}"
-                                                  Command="{Binding ResetSkinCommand}"
-                                                  IconPath="/Assets/Images/download.svg"
-                                                  Text="{x:Static lang:Resources.ResetSkin}"
-                                                  ToolTip.Tip="{x:Static lang:Resources.ResetSkin}"
-                                                  HorizontalAlignment="Center" />
-
-                            <components:GmlButton Classes="Icon Additional"
-                                                  Margin="0, 0, 0, 0"
-                                                  IsEnabled="{Binding !IsUploading}"
                                                   Click="OnChangeCloakClick"
                                                   IconPath="/Assets/Images/document.svg"
                                                   Text="{x:Static lang:Resources.ChangeCloak}"
@@ -78,10 +69,10 @@
                             <components:GmlButton Classes="Icon Additional"
                                                   Margin="0, 0, 0, 0"
                                                   IsEnabled="{Binding !IsUploading}"
-                                                  Command="{Binding ResetCloakCommand}"
+                                                  Command="{Binding ResetCommand}"
                                                   IconPath="/Assets/Images/download.svg"
-                                                  Text="{x:Static lang:Resources.ResetCloak}"
-                                                  ToolTip.Tip="{x:Static lang:Resources.ResetCloak}"
+                                                  Text="{x:Static lang:Resources.Reset}"
+                                                  ToolTip.Tip="{x:Static lang:Resources.Reset}"
                                                   HorizontalAlignment="Center" />
 
 
