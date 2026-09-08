@@ -46,6 +46,6 @@ public static class ResourceKeysDictionary
     public const string NewsEmptyTitle = "NewsEmptyTitle";
     public const string NewsEmptyContent = "NewsEmptyContent";
     public const string Host = "https://launcher.jokerge.com";
-    public const string SecondaryHost = "{{HOST_SECONDARY}}";
-    public const string FolderName = "test_folder";
+    public const string SecondaryHost = "https://launcher.jokerge.com";
+    public const string FolderName = "jokerge";
 }
