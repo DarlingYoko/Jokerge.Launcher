@@ -50,9 +50,9 @@ CI (`.github/workflows/ci.yml`) fans out to per-platform reusable workflows and 
 ## Configuration tokens (important)
 
 `src/Gml.Launcher/Assets/Resources/ResourceKeysDictionary.cs` holds the launcher's identity:
-`Host`, `SecondaryHost`, and `FolderName` (the installation subfolder). The committed
+`Host` and `FolderName` (the installation subfolder). The committed
 `ResourceKeysDictionary.Template.cs` (excluded from compile via `Compile Remove` in the csproj) is the
-template with `{{HOST}}`, `{{HOST_SECONDARY}}`, `{{FOLDER_NAME}}` placeholders that the GML backend
+template with `{{HOST}}`, `{{FOLDER_NAME}}` placeholders that the GML backend
 substitutes when it packages a launcher. When editing host/folder config, change
 `ResourceKeysDictionary.cs`; keep the `.Template.cs` placeholders intact.
 
@@ -100,8 +100,10 @@ Interface + implementation pairs (wired as `DependentUpon` in the csproj):
 ### Gml integration
 `GmlClientManager` (from the `Gml.Client` submodule) is the core bridge to the GML backend for auth,
 profile download/verification, and game launch. It is constructed in `ServiceLocator.RegisterGmlManager`
-with the install directory, gateway (from `CheckApiStatus(Host, SecondaryHost)`), a `GameLoader`, and
-the OS type, then registered as `IGmlClientManager`.
+with the install directory, gateway (`ResourceKeysDictionary.Host` — `GmlClientManager.CheckApiStatus`
+exists for pinging multiple candidate hosts and picking the first reachable one, but is deliberately not
+called here; see the comment on `RegisterGmlManager` for why), a `GameLoader`, and the OS type, then
+registered as `IGmlClientManager`.
 
 ## Conventions
 - 4-space indent for C#; 2-space for `.csproj`/xml/json/yaml (`.editorconfig`). `Nullable` is enabled.

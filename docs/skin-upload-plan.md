@@ -61,8 +61,8 @@ reduces to: file picker → POST to backend → refresh preview.**
      `.../cloaks/load`.
    - Resolve the host from the resolved gateway: the DI registers `IGmlClientManager` as the
      concrete `GmlClientManager`, which exposes `public Uri HostUri`. Cast to it and build the
-     absolute URL from `HostUri` (do NOT hardcode `ResourceKeysDictionary.Host` — the gateway
-     is chosen at startup between `Host`/`SecondaryHost`).
+     absolute URL from `HostUri` (do NOT hardcode `ResourceKeysDictionary.Host` directly — go
+     through the resolved `HostUri` so this keeps working if host resolution ever changes).
    - Send `MultipartFormDataContent`: a `StringContent` part named `Login` and a
      `StreamContent`/`ByteArrayContent` part named `Texture` (with a PNG content type), plus
      `Authorization: Bearer {accessToken}`.
