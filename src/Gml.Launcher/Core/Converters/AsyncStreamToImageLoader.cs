@@ -26,10 +26,12 @@ public class AsyncStreamToImageLoader
 
     private static async void OnSourceChanged(BackgroundComponent sender, AvaloniaPropertyChangedEventArgs args)
     {
+        string? url = null;
+
         try
         {
             sender.Classes.Clear();
-            var url = args.GetNewValue<string>();
+            url = args.GetNewValue<string>();
 
             if (string.IsNullOrEmpty(url) || !ValidateUrl(url))
             {
@@ -80,6 +82,7 @@ public class AsyncStreamToImageLoader
         catch (Exception exception)
         {
             sender.Source = null;
+            exception.Data["BackgroundUrl"] = url;
             SentrySdk.CaptureException(exception);
         }
     }
