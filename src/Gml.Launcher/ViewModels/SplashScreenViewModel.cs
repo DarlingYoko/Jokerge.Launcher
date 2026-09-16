@@ -13,7 +13,6 @@ using Splat;
 using System;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -121,7 +120,7 @@ public class SplashScreenViewModel : WindowViewModelBase
                     var process = _manager.ProgressChanged.Subscribe(
                         percentage => Progress = Convert.ToInt16(percentage));
 
-                    await _manager.UpdateCurrentLauncher(versionInfo, osType, Path.GetFileName(exePath));
+                    await _manager.UpdateCurrentLauncher(versionInfo, osType, exePath);
 
                     process.Dispose();
                 }

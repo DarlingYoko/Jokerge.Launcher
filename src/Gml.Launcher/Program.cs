@@ -4,8 +4,10 @@ using System.Reactive;
 using Avalonia;
 using Avalonia.ReactiveUI;
 using Gml.Client;
+using Gml.Client.Helpers;
 using Gml.Launcher.Assets;
 using Gml.Launcher.Core.Extensions;
+using Gml.Launcher.Core.Services;
 using ReactiveUI;
 using Sentry;
 
@@ -20,6 +22,9 @@ internal class Program
         try
         {
             Debug.WriteLine($"[Gml][{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] Application started");
+
+            if (LauncherUpdater.TryFinishPendingUpdate(args, new SystemService().GetOsType())) return;
+
             //InitializeSentry();
             // RxApp.DefaultExceptionHandler = Observer.Create<Exception>(GlobalExceptionHandler);
             BuildAvaloniaApp()
@@ -37,6 +42,9 @@ internal class Program
         try
         {
             Debug.WriteLine($"[Gml][{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] Application started");
+
+            if (LauncherUpdater.TryFinishPendingUpdate(args, new SystemService().GetOsType())) return;
+
             //InitializeSentry();
             RxApp.DefaultExceptionHandler = Observer.Create<Exception>(GlobalExceptionHandler);
             BuildAvaloniaApp(args)
