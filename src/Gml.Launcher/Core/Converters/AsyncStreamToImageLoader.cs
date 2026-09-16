@@ -31,12 +31,6 @@ public class AsyncStreamToImageLoader
             sender.Classes.Clear();
             var url = args.GetNewValue<string>();
 
-            if (string.IsNullOrEmpty(url))
-            {
-                sender.Source = null;
-                return;
-            }
-
             if (string.IsNullOrEmpty(url) || !ValidateUrl(url))
             {
                 sender.Source = null;
@@ -53,22 +47,39 @@ public class AsyncStreamToImageLoader
                 await ConvertStreamToFile(stream, fileName.FullName);
             }
 
-
-            var fileStream = File.OpenRead(fileName.FullName);
-
-            if (GifDecoder.IsGifStream(fileStream))
+            try
             {
-                sender.Classes.Add("Gif");
-                sender.SourceStream = fileStream;
+                var fileStream = File.OpenRead(fileName.FullName);
+
+                if (GifDecoder.IsGifStream(fileStream))
+                {
+                    sender.Classes.Add("Gif");
+                    sender.SourceStream = fileStream;
+                }
+                else
+                {
+                    using (fileStream)
+                    {
+                        sender.Classes.Add("Image");
+                        sender.Source = new Bitmap(fileStream);
+                    }
+                }
             }
-            else
+            catch
             {
-                sender.Classes.Add("Image");
-                sender.Source = new Bitmap(fileStream);
+                // The cached copy is corrupt/unreadable (e.g. an interrupted download or a bad
+                // response body was saved). Remove it so the next attempt re-downloads instead of
+                // failing on the same broken file forever.
+                fileName.Refresh();
+                if (fileName.Exists)
+                    fileName.Delete();
+
+                throw;
             }
         }
         catch (Exception exception)
         {
+            sender.Source = null;
             SentrySdk.CaptureException(exception);
         }
     }
