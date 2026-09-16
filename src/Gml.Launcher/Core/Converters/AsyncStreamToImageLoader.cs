@@ -82,8 +82,15 @@ public class AsyncStreamToImageLoader
         catch (Exception exception)
         {
             sender.Source = null;
-            exception.Data["BackgroundUrl"] = url;
-            SentrySdk.CaptureException(exception);
+
+            // The Sentry event's "value" field is what the crash panel actually displays, so put
+            // the failing URL there instead of Exception.Data (the backend's ingestion DTO has no
+            // field for it and silently drops it).
+            var reportedException = string.IsNullOrEmpty(url)
+                ? exception
+                : new InvalidOperationException($"Failed to load background image from '{url}'", exception);
+
+            SentrySdk.CaptureException(reportedException);
         }
     }
 
