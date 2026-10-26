@@ -237,6 +237,9 @@
   <data name="FailedOs" xml:space="preserve">
     <value>Не удалось определить операционную систему</value>
   </data>
+  <data name="OnServer" xml:space="preserve">
+    <value>На сервере</value>
+  </data>
   <data name="OnServers" xml:space="preserve">
     <value>На серверах</value>
   </data>
@@ -360,5 +363,20 @@
   </data>
   <data name="ProfileSuccessRemoved" xml:space="preserve">
     <value>Профиль успешно удален</value>
+  </data>
+  <data name="PresenceOverworld" xml:space="preserve">
+    <value>Гуляет по верхнему миру|Копает шахту в верхнем мире|Строит базу в верхнем мире|Находится в верхнем мире</value>
+  </data>
+  <data name="PresenceNether" xml:space="preserve">
+    <value>Копается в незере|Ищет крепость в незере|Добывает кварц в незере|Греется у лавы в незере</value>
+  </data>
+  <data name="PresenceEnd" xml:space="preserve">
+    <value>Ищет элитры в Энде|Сражается с драконом в Энде|Исследует города Энда</value>
+  </data>
+  <data name="PresenceOtherDimension" xml:space="preserve">
+    <value>Исследует неизведанное измерение|Путешествует между мирами</value>
+  </data>
+  <data name="PresenceMenu" xml:space="preserve">
+    <value>В главном меню</value>
   </data>
 </root>

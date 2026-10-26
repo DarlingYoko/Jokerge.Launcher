@@ -45,6 +45,13 @@ public static class ServiceLocator
             typeof(ISettingsService)
         );
         Locator.CurrentMutable.RegisterConstant(new SkinUploadService(manager), typeof(ISkinUploadService));
+        Locator.CurrentMutable.RegisterConstant(new DiscordPresenceService(
+                manager,
+                GetRequiredService<ILocalizationService>(),
+                GetRequiredService<IBackendChecker>()
+            ),
+            typeof(IDiscordPresenceService)
+        );
 
         AppDomain.CurrentDomain.UnhandledException += (_, args) =>
         {

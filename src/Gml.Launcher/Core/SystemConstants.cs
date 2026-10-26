@@ -22,6 +22,11 @@ public class SystemConstants
     public const string Files = "Files";
     public const string DefaultDRpcText = "DefaultDRpcText";
     public const string PlayDRpcText = "PlayDRpcText";
+    public const string PresenceOverworld = "PresenceOverworld";
+    public const string PresenceNether = "PresenceNether";
+    public const string PresenceEnd = "PresenceEnd";
+    public const string PresenceOtherDimension = "PresenceOtherDimension";
+    public const string PresenceMenu = "PresenceMenu";
     public const string Launching = "Launching";
     public const string PreparingLaunch = "PreparingLaunch";
     public const string CheckingFileIntegrity = "CheckingFileIntegrity";

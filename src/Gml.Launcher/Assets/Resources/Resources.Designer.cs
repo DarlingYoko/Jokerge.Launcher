@@ -559,6 +559,15 @@ namespace Gml.Launcher.Assets.Resources {
         }
 
         /// <summary>
+        ///   Ищет локализованную строку, похожую на On server.
+        /// </summary>
+        public static string OnServer {
+            get {
+                return ResourceManager.GetString("OnServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на On servers.
         /// </summary>
         public static string OnServers {

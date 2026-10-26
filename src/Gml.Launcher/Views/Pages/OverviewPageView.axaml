@@ -38,6 +38,8 @@
                     Grid.Column="0"
                     Online="{Binding ListViewModel.SelectedProfile.Servers,
                     Converter={converters:SumServersOnlineConverter}}"
+                    Label="{Binding ListViewModel.SelectedProfile.Servers,
+                    Converter={converters:ServersLabelConverter}}"
                     VerticalAlignment="Center" />
 
                 <components:ProgressBar Grid.Row="0"

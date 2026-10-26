@@ -226,7 +226,7 @@
     <value>Sits in the launcher</value>
   </data>
   <data name="PlayDRpcText" xml:space="preserve">
-    <value>Play in</value>
+    <value>Playing on</value>
   </data>
   <data name="CheckUpdates" xml:space="preserve">
     <value>Checking for updates</value>
@@ -236,6 +236,9 @@
   </data>
   <data name="FailedOs" xml:space="preserve">
     <value>Failed to determine the operating system</value>
+  </data>
+  <data name="OnServer" xml:space="preserve">
+    <value>On server</value>
   </data>
   <data name="OnServers" xml:space="preserve">
     <value>On servers</value>
@@ -362,5 +365,20 @@ To exit offline mode, make sure that the server is available, and then restart t
   </data>
   <data name="ProfileSuccessRemoved" xml:space="preserve">
     <value>Profile success removed</value>
+  </data>
+  <data name="PresenceOverworld" xml:space="preserve">
+    <value>Exploring the Overworld|Mining in the Overworld|Building a base in the Overworld|Roaming the Overworld</value>
+  </data>
+  <data name="PresenceNether" xml:space="preserve">
+    <value>Digging through the Nether|Hunting for a fortress in the Nether|Mining quartz in the Nether|Getting toasty in the Nether</value>
+  </data>
+  <data name="PresenceEnd" xml:space="preserve">
+    <value>Looking for elytra in the End|Fighting the dragon in the End|Exploring End cities</value>
+  </data>
+  <data name="PresenceOtherDimension" xml:space="preserve">
+    <value>Exploring an unknown dimension|Travelling between worlds</value>
+  </data>
+  <data name="PresenceMenu" xml:space="preserve">
+    <value>In the main menu</value>
   </data>
 </root>

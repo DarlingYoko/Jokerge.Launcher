@@ -213,6 +213,9 @@
   <data name="FailedOs" xml:space="preserve">
     <value>无法确定操作系统</value>
   </data>
+  <data name="OnServer" xml:space="preserve">
+    <value>在服务器上</value>
+  </data>
   <data name="OnServers" xml:space="preserve">
     <value>在服务器上</value>
   </data>

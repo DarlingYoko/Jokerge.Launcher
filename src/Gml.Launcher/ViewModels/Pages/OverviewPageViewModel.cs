@@ -56,6 +56,7 @@ public class OverviewPageViewModel : PageViewModelBase
     private readonly ISystemService _systemService;
     private readonly IBackendChecker _backendChecker;
     private readonly ISettingsService _settingsService;
+    private readonly IDiscordPresenceService _discordPresence;
     private readonly IDisposable? _speedSubscription;
 
     internal OverviewPageViewModel(IScreen screen,
@@ -66,7 +67,8 @@ public class OverviewPageViewModel : PageViewModelBase
         IStorageService? storageService = null,
         ISettingsService? settingsService = null,
         IBackendChecker? backendChecker = null,
-        LogHandler? logHandler = null) : base(screen)
+        LogHandler? logHandler = null,
+        IDiscordPresenceService? discordPresence = null) : base(screen)
     {
         _mainViewModel = screen as MainWindowViewModel ?? throw new Exception("Not valid screen");
         User = user;
@@ -95,6 +97,10 @@ public class OverviewPageViewModel : PageViewModelBase
         _settingsService = settingsService
                            ?? Locator.Current.GetService<ISettingsService>()
                            ?? throw new ServiceNotFoundException(typeof(ISettingsService));
+
+        _discordPresence = discordPresence
+                           ?? Locator.Current.GetService<IDiscordPresenceService>()
+                           ?? throw new ServiceNotFoundException(typeof(IDiscordPresenceService));
 
         GoProfileCommand = ReactiveCommand.CreateFromObservable(
             () => screen.Router.Navigate.Execute(new ProfilePageViewModel(screen, User, _gmlManager))
@@ -315,6 +321,8 @@ public class OverviewPageViewModel : PageViewModelBase
                     LocalizationService.GetString(SystemConstants.CheckingFileIntegrity),
                     true);
 
+                _discordPresence.TrackGame(ListViewModel.SelectedProfile!).DisposeWith(disposable);
+
                 var profileInfo = await GetProfileInfo();
 
                 _gmlManager.Gameloader.GameLaunched
@@ -379,11 +387,7 @@ public class OverviewPageViewModel : PageViewModelBase
                 disposable.Dispose();
                 Dispatcher.UIThread.Invoke(() => _mainViewModel._gameLaunched.OnNext(false));
                 UpdateProgress(string.Empty, string.Empty, false);
-                if (!_backendChecker.IsOffline)
-                {
-                    await _gmlManager.UpdateDiscordRpcState(
-                        LocalizationService.GetString(SystemConstants.DefaultDRpcText));
-                }
+                await _discordPresence.ShowLauncher();
             }
         });
     }
@@ -394,12 +398,6 @@ public class OverviewPageViewModel : PageViewModelBase
             LocalizationService.GetString(SystemConstants.Updating),
             LocalizationService.GetString(SystemConstants.UpdatingDescription),
             true);
-
-        if (!_backendChecker.IsOffline)
-        {
-            await _gmlManager.UpdateDiscordRpcState(
-                $"{LocalizationService.GetString(SystemConstants.PlayDRpcText)} \"{ListViewModel.SelectedProfile!.Name}\"");
-        }
 
         var settings = await _storageService.GetAsync<SettingsInfo>(StorageConstants.Settings) ?? SettingsInfo.Default;
 
@@ -492,8 +490,7 @@ public class OverviewPageViewModel : PageViewModelBase
             {
                 await LoadUserTexture();
                 await _gmlManager.LoadDiscordRpc();
-                await _gmlManager.UpdateDiscordRpcState(
-                    LocalizationService.GetString(SystemConstants.DefaultDRpcText));
+                await _discordPresence.ShowLauncher();
             }
         }
         catch (TaskCanceledException exception)
@@ -577,7 +574,7 @@ public class OverviewPageViewModel : PageViewModelBase
 
     private async Task LoadProfiles()
     {
-        ResponseMessage<List<ProfileReadDto>> profilesData;
+        ResponseMessage<List<LauncherProfileReadDto>> profilesData;
         if (_backendChecker.IsOffline)
         {
             profilesData = await _gmlManager.GetOfflineProfiles();
@@ -587,7 +584,7 @@ public class OverviewPageViewModel : PageViewModelBase
             profilesData = await _gmlManager.GetProfiles(User.AccessToken);
         }
 
-        ListViewModel.Profiles = new ObservableCollection<ProfileReadDto>(profilesData.Data ?? []);
+        ListViewModel.Profiles = new ObservableCollection<LauncherProfileReadDto>(profilesData.Data ?? []);
 
         var lastSelectedProfileName = await _storageService.GetAsync<string>(StorageConstants.LastSelectedProfileName);
 
