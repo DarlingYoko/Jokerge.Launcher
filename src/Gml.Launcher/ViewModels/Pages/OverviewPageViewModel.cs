@@ -321,7 +321,7 @@ public class OverviewPageViewModel : PageViewModelBase
                     LocalizationService.GetString(SystemConstants.CheckingFileIntegrity),
                     true);
 
-                _discordPresence.TrackGame(ListViewModel.SelectedProfile!).DisposeWith(disposable);
+                _discordPresence.TrackGame(ListViewModel.SelectedProfile!, User.Name).DisposeWith(disposable);
 
                 var profileInfo = await GetProfileInfo();
 

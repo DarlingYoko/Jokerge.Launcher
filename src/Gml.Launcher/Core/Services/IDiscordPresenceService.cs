@@ -11,7 +11,7 @@ public interface IDiscordPresenceService
 
     /// <summary>
     ///     Shows the in-game presence for <paramref name="profile"/> and keeps its status in sync with the
-    ///     dimension markers the game prints. Dispose the result when the game exits.
+    ///     dimension markers the game prints. The skin head of <paramref name="playerName"/> is shown as the small image. Dispose the result when the game exits.
     /// </summary>
-    IDisposable TrackGame(LauncherProfileReadDto profile);
+    IDisposable TrackGame(LauncherProfileReadDto profile, string playerName);
 }

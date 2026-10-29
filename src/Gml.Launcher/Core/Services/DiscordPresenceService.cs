@@ -32,7 +32,7 @@ public class DiscordPresenceService(
         }
     }
 
-    public IDisposable TrackGame(LauncherProfileReadDto profile)
+    public IDisposable TrackGame(LauncherProfileReadDto profile, string playerName)
     {
         if (backendChecker.IsOffline)
             return System.Reactive.Disposables.Disposable.Empty;
@@ -42,7 +42,7 @@ public class DiscordPresenceService(
         var details = $"{localizationService.GetString(SystemConstants.PlayDRpcText)} \"{name}\"";
 
         // No marker yet: vanilla profiles or a modpack without the presence mod only show the profile.
-        _ = UpdateGame(profile, details, name, null);
+        _ = UpdateGame(profile, details, name, playerName, null);
 
         return gmlManager.Gameloader.GameOutput
             .Select(line => PresenceLogParser.TryParseDimension(line, out var dimension)
@@ -50,17 +50,17 @@ public class DiscordPresenceService(
                 : (PresenceDimension?)null)
             .Where(dimension => dimension is not null)
             .DistinctUntilChanged()
-            .Subscribe(dimension => _ = UpdateGame(profile, details, name, dimension));
+            .Subscribe(dimension => _ = UpdateGame(profile, details, name, playerName, dimension));
     }
 
-    private async Task UpdateGame(LauncherProfileReadDto profile, string details, string name,
+    private async Task UpdateGame(LauncherProfileReadDto profile, string details, string name, string playerName,
         PresenceDimension? dimension)
     {
         try
         {
             var state = dimension is null ? null : PickPhrase(dimension.Value);
 
-            await gmlManager.UpdateDiscordRpcGameState(details, state, profile.DiscordImage, name);
+            await gmlManager.UpdateDiscordRpcGameState(details, state, profile.DiscordImage, name, playerName);
         }
         catch (Exception exception)
         {
