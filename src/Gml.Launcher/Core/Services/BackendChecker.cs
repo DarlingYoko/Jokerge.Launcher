@@ -1,15 +1,11 @@
 using System;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
-using Avalonia.Controls;
 using Gml.Client;
+using Gml.Client.Helpers;
 using Gml.Client.Interfaces;
-using Gml.Launcher.Assets;
 using Gml.Launcher.Core.Exceptions;
-using Gml.Launcher.Core.Services;
 using Sentry;
 using Splat;
 
@@ -28,29 +24,54 @@ public class BackendChecker: IBackendChecker
             ?? throw new ServiceNotFoundException(typeof(IGmlClientManager));
     }
 
+    /// <summary>
+    /// Probes every address in <see cref="GatewayHosts.All"/> at once and switches the client to the
+    /// first one in that order that answers, so the direct address wins whenever it works and the
+    /// relayed one is used only when the direct one doesn't answer.
+    /// </summary>
     public async Task UpdateBackendStatus()
     {
-        GlobalVariables.BackendInactive = await BackendIsActive() == false;
+        var reachable = await GatewaySelector.SelectAsync(GatewayHosts.All, Probe, GatewayHosts.ProbeTimeout,
+            GatewayHosts.FallbackGrace);
+
+        GlobalVariables.BackendInactive = reachable is null;
+        if (reachable is null || GatewaySelector.SameGateway(reachable, _manager.HostUri)) return;
+
+        SentrySdk.AddBreadcrumb($"Backend gateway switched from {_manager.HostUri} to {reachable}");
+        _manager.ChangeGateway(reachable);
     }
 
-    public Task<bool> BackendIsActive()
+    public async Task<bool> BackendIsActive()
     {
         try
         {
-            return GmlClientManager.CheckApiAsync(_manager.HostUri.ToString());
+            return await GmlClientManager.CheckApiAsync(_manager.HostUri.ToString());
         }
         catch (TaskCanceledException exception)
         {
             SentrySdk.CaptureException(exception);
             Console.WriteLine(exception);
-            return Task.FromResult(false);
+            return false;
         }
         catch (HttpRequestException exception)
         {
             SentrySdk.CaptureException(exception);
             Console.WriteLine(exception);
-            return Task.FromResult(false);
+            return false;
+        }
+    }
+
+    private static async Task<bool> Probe(Uri gateway, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await GmlClientManager.CheckApiAsync(gateway.ToString(), GatewayHosts.ProbeTimeout,
+                cancellationToken);
+        }
+        catch (Exception exception) when (exception is TaskCanceledException or HttpRequestException)
+        {
+            Console.WriteLine($"Backend {gateway} is not reachable: {exception.Message}");
+            return false;
         }
     }
 }
-
