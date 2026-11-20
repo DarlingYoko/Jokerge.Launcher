@@ -587,7 +587,7 @@ public class OverviewPageViewModel : PageViewModelBase
                 return;
             }
 
-            var news = await _gmlManager.GetNews();
+            var news = await _gmlManager.GetNews(User.AccessToken);
 
             if (news.Data?.Count == 0)
             {
