@@ -74,6 +74,7 @@ public class OverviewPageViewModel : PageViewModelBase
     {
         _mainViewModel = screen as MainWindowViewModel ?? throw new Exception("Not valid screen");
         User = user;
+        SentryPlayer.Set(user.Name);
         _onClosed = onClosed;
 
         _logHandler = logHandler
@@ -306,6 +307,7 @@ public class OverviewPageViewModel : PageViewModelBase
         return Dispatcher.UIThread.InvokeAsync(async () =>
         {
             await _storageService.SetAsync<IUser?>(StorageConstants.User, null);
+            SentryPlayer.Set(null);
             _mainViewModel.Router.Navigate.Execute(new LoginPageViewModel(_mainViewModel, _onClosed));
         });
     }
