@@ -8,6 +8,7 @@ using Avalonia;
 using Gml.Client;
 using Gml.Client.Interfaces;
 using Gml.Launcher.Assets;
+using Gml.Launcher.Core.Diagnostics;
 using Gml.Launcher.Core.Services;
 using Gml.Launcher.Models;
 using Sentry;
@@ -52,6 +53,14 @@ public static class ServiceLocator
             ),
             typeof(IDiscordPresenceService)
         );
+
+        Locator.CurrentMutable.RegisterConstant(new DiagnosticsService(
+                systemService,
+                storageService,
+                manager,
+                GetRequiredService<IBackendChecker>(),
+                GetRequiredService<LogHandler>()),
+            typeof(IDiagnosticsService));
 
         AppDomain.CurrentDomain.UnhandledException += (_, args) =>
         {

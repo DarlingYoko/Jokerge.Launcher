@@ -797,5 +797,125 @@ namespace Gml.Launcher.Assets.Resources {
                 return ResourceManager.GetString("ProfileSuccessRemoved", resourceCulture);
             }
         }
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Diagnostics.
+        /// </summary>
+        public static string Diagnostics {
+            get {
+                return ResourceManager.GetString("Diagnostics", resourceCulture);
+            }
+        }
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Launcher diagnostics.
+        /// </summary>
+        public static string DiagnosticsTitle {
+            get {
+                return ResourceManager.GetString("DiagnosticsTitle", resourceCulture);
+            }
+        }
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Collects information about your system, the connection to the server and your settings, and sends it to the administrators. Tokens and passwords are never included..
+        /// </summary>
+        public static string DiagnosticsDescription {
+            get {
+                return ResourceManager.GetString("DiagnosticsDescription", resourceCulture);
+            }
+        }
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Collect and send.
+        /// </summary>
+        public static string DiagnosticsRun {
+            get {
+                return ResourceManager.GetString("DiagnosticsRun", resourceCulture);
+            }
+        }
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Copy report.
+        /// </summary>
+        public static string DiagnosticsCopy {
+            get {
+                return ResourceManager.GetString("DiagnosticsCopy", resourceCulture);
+            }
+        }
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Close.
+        /// </summary>
+        public static string DiagnosticsClose {
+            get {
+                return ResourceManager.GetString("DiagnosticsClose", resourceCulture);
+            }
+        }
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Collecting data….
+        /// </summary>
+        public static string DiagnosticsCollecting {
+            get {
+                return ResourceManager.GetString("DiagnosticsCollecting", resourceCulture);
+            }
+        }
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на The report has been sent to the administrators. Number: {0}.
+        /// </summary>
+        public static string DiagnosticsSent {
+            get {
+                return ResourceManager.GetString("DiagnosticsSent", resourceCulture);
+            }
+        }
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Could not send the report ({0}). Copy it and send it to the administrators yourself..
+        /// </summary>
+        public static string DiagnosticsSendFailed {
+            get {
+                return ResourceManager.GetString("DiagnosticsSendFailed", resourceCulture);
+            }
+        }
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на The report has been copied to the clipboard.
+        /// </summary>
+        public static string DiagnosticsCopied {
+            get {
+                return ResourceManager.GetString("DiagnosticsCopied", resourceCulture);
+            }
+        }
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на The game may not start properly.
+        /// </summary>
+        public static string PreLaunchWarningTitle {
+            get {
+                return ResourceManager.GetString("PreLaunchWarningTitle", resourceCulture);
+            }
+        }
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Low disk space: {0} needed (download {1} + reserve {2}), {3} free. Free up disk space or choose another installation folder in the settings..
+        /// </summary>
+        public static string PreLaunchLowDisk {
+            get {
+                return ResourceManager.GetString("PreLaunchLowDisk", resourceCulture);
+            }
+        }
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Only {0} MB of RAM is free, but the game is given {1} MB. Close other programs or lower the memory amount in the launcher settings..
+        /// </summary>
+        public static string PreLaunchLowMemory {
+            get {
+                return ResourceManager.GetString("PreLaunchLowMemory", resourceCulture);
+            }
+        }
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Launch anyway.
+        /// </summary>
+        public static string PreLaunchContinue {
+            get {
+                return ResourceManager.GetString("PreLaunchContinue", resourceCulture);
+            }
+        }
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Cancel.
+        /// </summary>
+        public static string PreLaunchCancel {
+            get {
+                return ResourceManager.GetString("PreLaunchCancel", resourceCulture);
+            }
+        }
     }
 }

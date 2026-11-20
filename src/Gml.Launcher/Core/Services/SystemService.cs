@@ -27,6 +27,15 @@ public class SystemService : ISystemService
         return _hardwareInfo.MemoryStatus.TotalPhysical / (1024 * 1024);
     }
 
+    public ulong GetFreeRam()
+    {
+        if (!(IsWindows() || IsLinux() || IsMacOS())) throw new NotSupportedException(NotSupportedMessage);
+
+        _hardwareInfo.RefreshMemoryStatus();
+
+        return _hardwareInfo.MemoryStatus.AvailablePhysical / (1024 * 1024);
+    }
+
     public string GetApplicationFolder()
     {
         if (IsWindows()) return Path.GetFullPath(GetFolderPath(Environment.SpecialFolder.ApplicationData));

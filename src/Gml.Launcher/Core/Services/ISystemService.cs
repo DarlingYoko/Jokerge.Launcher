@@ -31,6 +31,11 @@ public interface ISystemService
     ulong GetMaxRam();
 
     /// <summary>
+    ///     Gets the physical RAM currently available to new processes, in megabytes.
+    /// </summary>
+    ulong GetFreeRam();
+
+    /// <summary>
     ///     Gets the operating system type.
     /// </summary>
     /// <returns>The operating system type. Possible values are: Undefined, Linux, OsX, Windows.</returns>

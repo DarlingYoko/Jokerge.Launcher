@@ -379,4 +379,58 @@
   <data name="PresenceMenu" xml:space="preserve">
     <value>В главном меню</value>
   </data>
+  <data name="Diagnostics" xml:space="preserve">
+    <value>Диагностика</value>
+  </data>
+  <data name="DiagnosticsTitle" xml:space="preserve">
+    <value>Диагностика лаунчера</value>
+  </data>
+  <data name="DiagnosticsDescription" xml:space="preserve">
+    <value>Соберёт сведения о системе, связи с сервером и настройках и отправит их администрации. Токены и пароли в отчёт не попадают.</value>
+  </data>
+  <data name="DiagnosticsRun" xml:space="preserve">
+    <value>Собрать и отправить</value>
+  </data>
+  <data name="DiagnosticsCopy" xml:space="preserve">
+    <value>Скопировать отчёт</value>
+  </data>
+  <data name="DiagnosticsClose" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="DiagnosticsCollecting" xml:space="preserve">
+    <value>Собираем данные…</value>
+  </data>
+  <data name="DiagnosticsSent" xml:space="preserve">
+    <value>Отчёт отправлен администрации. Номер: {0}</value>
+  </data>
+  <data name="DiagnosticsSendFailed" xml:space="preserve">
+    <value>Не удалось отправить отчёт ({0}). Скопируйте его и передайте администрации вручную.</value>
+  </data>
+  <data name="DiagnosticsCopied" xml:space="preserve">
+    <value>Отчёт скопирован в буфер обмена</value>
+  </data>
+  <data name="PreLaunchWarningTitle" xml:space="preserve">
+    <value>Возможны проблемы при запуске</value>
+  </data>
+  <data name="PreLaunchLowDisk" xml:space="preserve">
+    <value>Мало места на диске: нужно {0} (загрузка {1} + запас {2}), свободно {3}. Освободите место на диске или выберите другую папку установки в настройках.</value>
+  </data>
+  <data name="PreLaunchLowMemory" xml:space="preserve">
+    <value>Свободной оперативной памяти {0} МБ, а игре выделено {1} МБ. Закройте лишние программы или уменьшите объём памяти в настройках лаунчера.</value>
+  </data>
+  <data name="PreLaunchContinue" xml:space="preserve">
+    <value>Всё равно запустить</value>
+  </data>
+  <data name="PreLaunchCancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="RamAutoLimitedTitle" xml:space="preserve">
+    <value>Памяти меньше рекомендуемой</value>
+  </data>
+  <data name="RamAutoLimited" xml:space="preserve">
+    <value>Выделено {0} МБ из рекомендуемых {1} МБ: на ПК мало свободной памяти. Закройте браузер и другие программы, чтобы игре досталось больше.</value>
+  </data>
+  <data name="RamAutoPreview" xml:space="preserve">
+    <value>Будет выделено {0} МБ из рекомендуемых {1} МБ (свободно сейчас {2} МБ). Объём подбирается под свободную память перед каждым запуском.</value>
+  </data>
 </root>

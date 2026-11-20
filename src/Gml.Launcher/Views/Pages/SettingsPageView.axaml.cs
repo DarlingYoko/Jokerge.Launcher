@@ -28,6 +28,23 @@ public partial class SettingsPageView : ReactiveUserControl<SettingsPageViewMode
         AvaloniaXamlLoader.Load(this);
     }
 
+    private async void CopyDiagnostics(object? sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var text = ViewModel?.DiagnosticsReportText;
+            var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
+            if (string.IsNullOrEmpty(text) || clipboard is null) return;
+
+            await clipboard.SetTextAsync(text);
+            ViewModel?.NotifyDiagnosticsCopied();
+        }
+        catch (Exception exception)
+        {
+            SentrySdk.CaptureException(exception);
+        }
+    }
+
     private void OnTextInput(object sender, AvaloniaPropertyChangedEventArgs e)
     {
     }

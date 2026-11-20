@@ -9,6 +9,7 @@ using Gml.Client.Helpers;
 using Gml.Client.Models;
 using Gml.Launcher.Assets;
 using Gml.Launcher.Core;
+using Gml.Launcher.Core.Diagnostics;
 using Gml.Launcher.Core.Exceptions;
 using Gml.Launcher.Core.Services;
 using Gml.Launcher.Models;
@@ -58,6 +59,7 @@ public class OverviewPageViewModel : PageViewModelBase
     private readonly ISettingsService _settingsService;
     private readonly IDiscordPresenceService _discordPresence;
     private readonly IDisposable? _speedSubscription;
+    private RamPlan? _ramPlan;
 
     internal OverviewPageViewModel(IScreen screen,
         ILauncherUser user,
@@ -120,7 +122,9 @@ public class OverviewPageViewModel : PageViewModelBase
                 screen,
                 LocalizationService,
                 _settingsService,
-                _gmlManager))
+                _gmlManager,
+                User,
+                profileRecommendedRamMb: ListViewModel.SelectedProfile?.RecommendedRam))
         );
 
         HomeCommand = ReactiveCommand.Create(async () => await LoadProfiles());
@@ -325,6 +329,9 @@ public class OverviewPageViewModel : PageViewModelBase
 
                 var profileInfo = await GetProfileInfo();
 
+                if (!await ConfirmPreLaunchChecks(profileInfo?.Data))
+                    return;
+
                 _gmlManager.Gameloader.GameLaunched
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Subscribe(c => _mainViewModel._gameLaunched.OnNext(true))
@@ -404,7 +411,7 @@ public class OverviewPageViewModel : PageViewModelBase
         var localProfile = new ProfileCreateInfoDto
         {
             ProfileName = ListViewModel.SelectedProfile!.Name,
-            RamSize = CalculateRecommendedRam(settings),
+            RamSize = (_ramPlan = PlanRam(settings)).AllocatedMb,
             IsFullScreen = settings.FullScreen,
             OsType = ((int)_systemService.GetOsType()).ToString(),
             OsArchitecture = _systemService.GetOsArchitecture(),
@@ -429,28 +436,62 @@ public class OverviewPageViewModel : PageViewModelBase
         return profileInfo;
     }
 
-    private int CalculateRecommendedRam(SettingsInfo settings)
+    private RamPlan PlanRam(SettingsInfo settings)
     {
-        var maxRam = (int)_systemService.GetMaxRam();
-        var recommendedRam = settings.IsDynamicRam ? ListViewModel.SelectedProfile?.RecommendedRam ?? 1024 : Convert.ToInt32(settings.RamValue);
-
-        var minValue = Math.Min(recommendedRam, maxRam);
-
-        return minValue == 0 && ListViewModel.SelectedProfile?.RecommendedRam == 0 ? 1024 : minValue;
+        return RamSelection.Plan(settings.IsDynamicRam, settings.RamValue,
+            ListViewModel.SelectedProfile?.RecommendedRam, (long)_systemService.GetMaxRam(),
+            PreLaunchMeasurements.FreeRamMb(_systemService));
     }
 
-    private static string FormatBytes(long bytes)
+    private static string FormatBytes(long bytes) => ByteSize.Format(bytes);
+
+    /// <summary>
+    ///     Warns when the disk cannot fit the files still to download plus a reserve, or free RAM is
+    ///     below what the game is given; the player can still launch anyway.
+    /// </summary>
+    /// <returns>Whether to go on with the launch.</returns>
+    private async Task<bool> ConfirmPreLaunchChecks(ProfileReadInfoDto? profile)
     {
-        const int scale = 1024;
-        string[] orders = ["B", "KB", "MB", "GB", "TB"];
-        double max = bytes;
-        int order = 0;
-        while (max >= scale && order < orders.Length - 1)
-        {
-            order++;
-            max /= scale;
-        }
-        return string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0:0.##} {1}", max, orders[order]);
+        if (_ramPlan is { IsBelowRecommendation: true } limited)
+            ShowRamLimitedHint(limited);
+
+        var issues = PreLaunchMeasurements.Evaluate(profile, _gmlManager.InstallationDirectory, _systemService,
+            _ramPlan?.AllocatedMb ?? 0);
+
+        if (issues.Count == 0) return true;
+
+        var message = PreLaunchCheck.Describe(issues,
+            LocalizationService.GetString(DiagnosticsResourceKeys.PreLaunchLowDisk),
+            LocalizationService.GetString(DiagnosticsResourceKeys.PreLaunchLowMemory));
+        var answer = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        Dispatcher.UIThread.Invoke(() => _mainViewModel.Manager
+            .CreateMessage(false, "#C27C0E",
+                LocalizationService.GetString(DiagnosticsResourceKeys.PreLaunchWarningTitle),
+                message)
+            .WithCloseButtonVisible(false)
+            .Dismiss().WithButton(LocalizationService.GetString(DiagnosticsResourceKeys.PreLaunchContinue),
+                _ => answer.TrySetResult(true))
+            .Dismiss().WithButton(LocalizationService.GetString(DiagnosticsResourceKeys.PreLaunchCancel),
+                _ => answer.TrySetResult(false))
+            .Queue());
+
+        return await answer.Task;
+    }
+
+    /// <summary>«Автоматически» had to give less than the panel recommends: a non-blocking hint.</summary>
+    private void ShowRamLimitedHint(RamPlan plan)
+    {
+        var message = string.Format(LocalizationService.GetString(DiagnosticsResourceKeys.RamAutoLimited),
+            plan.AllocatedMb, plan.RecommendedMb);
+
+        Dispatcher.UIThread.Invoke(() => _mainViewModel.Manager
+            .CreateMessage(true, "#C27C0E",
+                LocalizationService.GetString(DiagnosticsResourceKeys.RamAutoLimitedTitle),
+                message)
+            .Dismiss()
+            .WithDelay(TimeSpan.FromSeconds(10))
+            .Queue());
     }
 
     private void UpdateProgress(string headline, string description, bool isProcessing, int? percentage = null)

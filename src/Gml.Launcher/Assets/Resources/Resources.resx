@@ -381,4 +381,58 @@ To exit offline mode, make sure that the server is available, and then restart t
   <data name="PresenceMenu" xml:space="preserve">
     <value>In the main menu</value>
   </data>
+  <data name="Diagnostics" xml:space="preserve">
+    <value>Diagnostics</value>
+  </data>
+  <data name="DiagnosticsTitle" xml:space="preserve">
+    <value>Launcher diagnostics</value>
+  </data>
+  <data name="DiagnosticsDescription" xml:space="preserve">
+    <value>Collects information about your system, the connection to the server and your settings, and sends it to the administrators. Tokens and passwords are never included.</value>
+  </data>
+  <data name="DiagnosticsRun" xml:space="preserve">
+    <value>Collect and send</value>
+  </data>
+  <data name="DiagnosticsCopy" xml:space="preserve">
+    <value>Copy report</value>
+  </data>
+  <data name="DiagnosticsClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="DiagnosticsCollecting" xml:space="preserve">
+    <value>Collecting data…</value>
+  </data>
+  <data name="DiagnosticsSent" xml:space="preserve">
+    <value>The report has been sent to the administrators. Number: {0}</value>
+  </data>
+  <data name="DiagnosticsSendFailed" xml:space="preserve">
+    <value>Could not send the report ({0}). Copy it and send it to the administrators yourself.</value>
+  </data>
+  <data name="DiagnosticsCopied" xml:space="preserve">
+    <value>The report has been copied to the clipboard</value>
+  </data>
+  <data name="PreLaunchWarningTitle" xml:space="preserve">
+    <value>The game may not start properly</value>
+  </data>
+  <data name="PreLaunchLowDisk" xml:space="preserve">
+    <value>Low disk space: {0} needed (download {1} + reserve {2}), {3} free. Free up disk space or choose another installation folder in the settings.</value>
+  </data>
+  <data name="PreLaunchLowMemory" xml:space="preserve">
+    <value>Only {0} MB of RAM is free, but the game is given {1} MB. Close other programs or lower the memory amount in the launcher settings.</value>
+  </data>
+  <data name="PreLaunchContinue" xml:space="preserve">
+    <value>Launch anyway</value>
+  </data>
+  <data name="PreLaunchCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="RamAutoLimitedTitle" xml:space="preserve">
+    <value>Less memory than recommended</value>
+  </data>
+  <data name="RamAutoLimited" xml:space="preserve">
+    <value>The game gets {0} MB of the recommended {1} MB: there is not enough free memory on this PC. Close the browser and other programs so the game gets more.</value>
+  </data>
+  <data name="RamAutoPreview" xml:space="preserve">
+    <value>{0} MB of the recommended {1} MB will be allocated ({2} MB free right now). The amount is fitted to free memory before every launch.</value>
+  </data>
 </root>

@@ -6,15 +6,19 @@ using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using Gml.Client;
 using Gml.Client.Interfaces;
 using Gml.Launcher.Assets.Resources;
+using Gml.Launcher.Core.Diagnostics;
 using Gml.Launcher.Core.Services;
 using Gml.Launcher.Models;
 using Gml.Launcher.ViewModels.Base;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Sentry;
+using Splat;
 
 namespace Gml.Launcher.ViewModels.Pages;
 
@@ -23,6 +27,10 @@ public class SettingsPageViewModel : PageViewModelBase
     private const int HighRamThreshold = 16384;
     private readonly IGmlClientManager _gmlManager;
     private readonly ISettingsService _settingsService;
+    private readonly ILauncherUser? _user;
+    private readonly IDiagnosticsService? _diagnosticsService;
+    private readonly ISystemService? _systemService;
+    private readonly int? _profileRecommendedRamMb;
 
     private double _ramValue;
     private int _windowHeight;
@@ -32,11 +40,30 @@ public class SettingsPageViewModel : PageViewModelBase
         IScreen screen,
         ILocalizationService? localizationService,
         ISettingsService settingsService,
-        IGmlClientManager gmlManager) : base(screen, localizationService)
+        IGmlClientManager gmlManager,
+        ILauncherUser? user = null,
+        IDiagnosticsService? diagnosticsService = null,
+        int? profileRecommendedRamMb = null,
+        ISystemService? systemService = null) : base(screen, localizationService)
     {
         MainViewModel = (MainWindowViewModel)screen;
         _settingsService = settingsService;
         _gmlManager = gmlManager;
+        _user = user;
+        _diagnosticsService = diagnosticsService ?? Locator.Current.GetService<IDiagnosticsService>();
+        _systemService = systemService ?? Locator.Current.GetService<ISystemService>();
+        _profileRecommendedRamMb = profileRecommendedRamMb;
+
+        this.WhenAnyValue(x => x.DynamicRamValue)
+            .Where(isDynamic => isDynamic)
+            .ObserveOn(RxApp.TaskpoolScheduler)
+            .Select(_ => DescribeAutoRam())
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(preview => AutoRamPreview = preview);
+
+        RunDiagnosticsCommand = ReactiveCommand.CreateFromTask(RunDiagnostics,
+            this.WhenAnyValue(x => x.IsDiagnosticsRunning, running => !running && CanRunDiagnostics));
+        CloseDiagnosticsCommand = ReactiveCommand.Create(() => { IsDiagnosticsOpen = false; });
 
         this.WhenAnyValue(
                 x => x.RamValue,
@@ -101,6 +128,18 @@ public class SettingsPageViewModel : PageViewModelBase
     [Reactive] public string? RamValueView { get; set; }
     [Reactive] private SettingsInfo? Settings { get; set; }
 
+    // «Диагностика»: one click collects the report, sends it to the server and shows it for copying.
+    /// <summary>With «автоматически» on: how much the game would get on this PC right now.</summary>
+    [Reactive] public string? AutoRamPreview { get; private set; }
+
+    [Reactive] public bool IsDiagnosticsOpen { get; set; }
+    [Reactive] public bool IsDiagnosticsRunning { get; private set; }
+    [Reactive] public string? DiagnosticsReportText { get; private set; }
+    [Reactive] public string? DiagnosticsStatus { get; private set; }
+    public bool CanRunDiagnostics => _user is not null && _diagnosticsService is not null;
+    public ICommand RunDiagnosticsCommand { get; }
+    public ICommand CloseDiagnosticsCommand { get; }
+
     public double RamValue
     {
         get => _ramValue;
@@ -154,6 +193,66 @@ public class SettingsPageViewModel : PageViewModelBase
 
     public string LauncherVersion { get; } =
         "v" + (Assembly.GetExecutingAssembly().GetName().Version ?? new Version(1, 0, 0, 0));
+
+    private async Task RunDiagnostics()
+    {
+        if (_user is null || _diagnosticsService is null) return;
+
+        IsDiagnosticsOpen = true;
+        IsDiagnosticsRunning = true;
+        DiagnosticsReportText = null;
+        DiagnosticsStatus = LocalizationService.GetString(DiagnosticsResourceKeys.DiagnosticsCollecting);
+
+        try
+        {
+            var user = _user;
+            var report = await Task.Run(() => _diagnosticsService.CollectAsync(user));
+            DiagnosticsReportText = report.Text;
+
+            var result = await _diagnosticsService.SendAsync(user, report);
+            DiagnosticsStatus = result.Success
+                ? string.Format(LocalizationService.GetString(DiagnosticsResourceKeys.DiagnosticsSent),
+                    result.Id?.ToString("N")[..8] ?? "—")
+                : string.Format(LocalizationService.GetString(DiagnosticsResourceKeys.DiagnosticsSendFailed),
+                    result.Error);
+        }
+        catch (Exception exception)
+        {
+            SentrySdk.CaptureException(exception);
+            DiagnosticsStatus = string.Format(
+                LocalizationService.GetString(DiagnosticsResourceKeys.DiagnosticsSendFailed), exception.Message);
+        }
+        finally
+        {
+            IsDiagnosticsRunning = false;
+        }
+    }
+
+    private string? DescribeAutoRam()
+    {
+        if (_systemService is null) return null;
+
+        try
+        {
+            var freeRam = PreLaunchMeasurements.FreeRamMb(_systemService);
+            var plan = RamSelection.Plan(true, 0, _profileRecommendedRamMb, (long)_systemService.GetMaxRam(),
+                freeRam);
+
+            return string.Format(LocalizationService.GetString(DiagnosticsResourceKeys.RamAutoPreview),
+                plan.AllocatedMb, plan.RecommendedMb, freeRam?.ToString() ?? "?");
+        }
+        catch (Exception exception)
+        {
+            SentrySdk.CaptureException(exception);
+            return null;
+        }
+    }
+
+    internal void NotifyDiagnosticsCopied()
+    {
+        ShowSuccess(DiagnosticsResourceKeys.Diagnostics,
+            LocalizationService.GetString(DiagnosticsResourceKeys.DiagnosticsCopied));
+    }
 
     private void ChangeLanguage(Language? language)
     {
