@@ -14,9 +14,14 @@ public class ProfileUserControl : ItemsControl
         AvaloniaProperty.Register<ProfileUserControl, IEnumerable<ProfileInfoItem>>(
             nameof(ProfileInfoItems));
 
-    public static readonly StyledProperty<string> SkinUrlProperty =
-        AvaloniaProperty.Register<ProfileUserControl, string>(
-            nameof(SkinUrl), "https://www.clipartkey.com/mpngs/m/215-2156859_fond-transparent-steve-minecraft.png");
+    public static readonly StyledProperty<string?> SkinUrlProperty =
+        AvaloniaProperty.Register<ProfileUserControl, string?>(nameof(SkinUrl));
+
+    public static readonly StyledProperty<string?> CapeUrlProperty =
+        AvaloniaProperty.Register<ProfileUserControl, string?>(nameof(CapeUrl));
+
+    public static readonly StyledProperty<string?> ViewerHintProperty =
+        AvaloniaProperty.Register<ProfileUserControl, string?>(nameof(ViewerHint));
 
     public static readonly StyledProperty<string> UserNameProperty =
         AvaloniaProperty.Register<ProfileUserControl, string>(
@@ -28,10 +33,23 @@ public class ProfileUserControl : ItemsControl
         set => SetValue(UserNameProperty, value);
     }
 
-    public string SkinUrl
+    public string? SkinUrl
     {
         get => GetValue(SkinUrlProperty);
         set => SetValue(SkinUrlProperty, value);
+    }
+
+    public string? CapeUrl
+    {
+        get => GetValue(CapeUrlProperty);
+        set => SetValue(CapeUrlProperty, value);
+    }
+
+    /// <summary>Tooltip of the 3D model, e.g. "drag to rotate".</summary>
+    public string? ViewerHint
+    {
+        get => GetValue(ViewerHintProperty);
+        set => SetValue(ViewerHintProperty, value);
     }
 
     public IEnumerable<ProfileInfoItem> ProfileInfoItems

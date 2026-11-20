@@ -1,7 +1,6 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="using:Gml.Launcher.Views.Components"
-        xmlns:converters="clr-namespace:Gml.Launcher.Core.Converters">
+        xmlns:controls="using:Gml.Launcher.Views.Components">
     <Design.PreviewWith>
         <Border Background="{DynamicResource BackgroundColor}"
                 Width="390"
@@ -19,32 +18,33 @@
 
                     <Grid RowDefinitions="Auto, *">
 
-                        <Grid>
-                            <Border Padding="0, 60, 0, 0" Height="250">
+                        <Grid Height="340">
+                            <Canvas VerticalAlignment="Bottom" Height="20">
+                                <Path Canvas.Bottom="0"
+                                      Data="M 0 -200 L 0 0 L 60 20 L 290 20 L 350 0 L 350 -200 Z"
+                                      Fill="{DynamicResource ProfileLinearGradient}" />
+                                <Path Stroke="{DynamicResource PrimaryColor}"
+                                      Canvas.Bottom="0"
+                                      StrokeThickness="2"
+                                      Data="M 0 0 L 60 20 L 290 20 L 350 0" />
+                            </Canvas>
 
-                                <Grid ClipToBounds="True">
-                                    <controls:LoadingControl Background="Transparent"
-                                                             Foreground="{DynamicResource PrimaryColor}"
-                                                             Size="45" />
-                                    <Canvas>
-                                        <Path Canvas.Bottom="0"
-                                              Data="M 0 -200 L 0 0 L 60 20 L 290 20 L 350 0 L 350 -200 Z"
-                                              Fill="{DynamicResource ProfileLinearGradient}" />
-                                        <Path Stroke="{DynamicResource PrimaryColor}"
-                                              Canvas.Bottom="0"
-                                              StrokeThickness="2"
-                                              Data="M 0 0 L 60 20 L 290 20 L 350 0" />
-                                    </Canvas>
-                                    <Image converters:AsyncSkinRenderLoader.Source="{TemplateBinding SkinUrl}"
-                                           VerticalAlignment="Top"
-                                           Margin="0, 0, 0, -128"
-                                           Height="350" />
-                                </Grid>
-                            </Border>
+                            <controls:LoadingControl Background="Transparent"
+                                                     Foreground="{DynamicResource PrimaryColor}"
+                                                     IsVisible="{Binding !#Viewer.IsTextureLoaded}"
+                                                     Size="45" />
+
+                            <controls:SkinViewer3D x:Name="Viewer"
+                                                   SkinUrl="{TemplateBinding SkinUrl}"
+                                                   CapeUrl="{TemplateBinding CapeUrl}"
+                                                   ToolTip.Tip="{TemplateBinding ViewerHint}"
+                                                   Margin="0, 56, 0, 8" />
+
                             <TextBlock Text="{TemplateBinding UserName}"
                                        Foreground="{DynamicResource PrimaryColor}"
                                        TextAlignment="Center"
                                        VerticalAlignment="Top"
+                                       IsHitTestVisible="False"
                                        Margin="0,15,0,0"
                                        FontSize="24"
                                        FontWeight="ExtraBlack" />

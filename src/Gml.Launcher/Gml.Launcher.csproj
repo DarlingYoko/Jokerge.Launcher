@@ -89,6 +89,12 @@
     <Compile Update="Core\Services\SkinUploadService.cs">
       <DependentUpon>ISkinUploadService.cs</DependentUpon>
     </Compile>
+    <Compile Update="Core\Services\ServerStatsService.cs">
+      <DependentUpon>IServerStatsService.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Core\Services\ClientTimeService.cs">
+      <DependentUpon>IClientTimeService.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 

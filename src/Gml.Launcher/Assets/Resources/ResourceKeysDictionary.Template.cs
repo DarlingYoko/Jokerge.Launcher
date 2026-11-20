@@ -47,4 +47,7 @@ public static class ResourceKeysDictionary
     public const string NewsEmptyContent = "NewsEmptyContent";
     public const string Host = "{{HOST}}";
     public const string FolderName = "{{FOLDER_NAME}}";
+    /// <summary>players.json of the server stats site of a profile; {profile} is the profile name in lower case.
+    /// Empty hides the "On the server" block. See Core/Stats/ServerStatsUrl.cs.</summary>
+    public const string ServerStatsUrl = "https://{profile}.stats.jokerge.com/players.json";
 }

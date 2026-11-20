@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Threading;
@@ -12,7 +15,10 @@ using Gml.Launcher.Assets;
 using Gml.Launcher.Core;
 using Gml.Launcher.Core.Exceptions;
 using Gml.Launcher.Core.Services;
+using Gml.Launcher.Core.Stats;
 using Gml.Launcher.ViewModels.Base;
+using Gml.Launcher.ViewModels.Components;
+using Avalonia.Threading;
 using GmlCore.Interfaces;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -27,7 +33,17 @@ public class ProfilePageViewModel : PageViewModelBase
 {
     private readonly IGmlClientManager _manager;
     private readonly ISkinUploadService _skinUploadService;
-    [Reactive] public string TextureUrl { get; set; }
+    private readonly IServerStatsService _serverStatsService;
+    private readonly IClientTimeService _clientTimeService;
+    private readonly IBackendChecker _backendChecker;
+    [Reactive] public string TextureUrl { get; set; } = string.Empty;
+    [Reactive] public string CapeUrl { get; set; } = string.Empty;
+    [Reactive] public bool HasNoStats { get; set; }
+    public ObservableCollection<ProfileStatsCardViewModel> StatsCards { get; } = [];
+    public string StatsTitle => LocalizationService.GetString(SystemConstants.ProfileStatsTitle);
+    public string StatsSourceNote => LocalizationService.GetString(SystemConstants.StatsServerNote);
+    public string NoStatsText => LocalizationService.GetString(SystemConstants.StatsNoProfiles);
+    public string SkinViewerHint => LocalizationService.GetString(SystemConstants.SkinViewerHint);
     [Reactive] public ILauncherUser LauncherUser { get; set; }
     [Reactive] public bool IsUploading { get; set; }
     public ReactiveCommand<Unit, Unit> ResetCommand { get; }
@@ -36,7 +52,10 @@ public class ProfilePageViewModel : PageViewModelBase
         ILauncherUser launcherUser,
         IGmlClientManager manager,
         ILocalizationService? localizationService = null,
-        ISkinUploadService? skinUploadService = null) : base(screen,
+        ISkinUploadService? skinUploadService = null,
+        IBackendChecker? backendChecker = null,
+        IServerStatsService? serverStatsService = null,
+        IClientTimeService? clientTimeService = null) : base(screen,
         localizationService)
     {
         LauncherUser = launcherUser ?? throw new ArgumentNullException(nameof(launcherUser));
@@ -44,10 +63,20 @@ public class ProfilePageViewModel : PageViewModelBase
         _skinUploadService = skinUploadService
                               ?? Locator.Current.GetService<ISkinUploadService>()
                               ?? throw new ServiceNotFoundException(typeof(ISkinUploadService));
+        _backendChecker = backendChecker
+                          ?? Locator.Current.GetService<IBackendChecker>()
+                          ?? throw new ServiceNotFoundException(typeof(IBackendChecker));
+        _serverStatsService = serverStatsService
+                              ?? Locator.Current.GetService<IServerStatsService>()
+                              ?? throw new ServiceNotFoundException(typeof(IServerStatsService));
+        _clientTimeService = clientTimeService
+                             ?? Locator.Current.GetService<IClientTimeService>()
+                             ?? throw new ServiceNotFoundException(typeof(IClientTimeService));
 
         ResetCommand = ReactiveCommand.CreateFromTask(ResetTextureAsync);
 
         RxApp.TaskpoolScheduler.Schedule(LoadData);
+        RxApp.TaskpoolScheduler.Schedule(LoadStats);
     }
 
     public new string Title => LocalizationService.GetString(SystemConstants.MainPageTitle);
@@ -64,9 +93,8 @@ public class ProfilePageViewModel : PageViewModelBase
 
             var skinUrl = userTextureInfo.FullSkinUrl;
 
-            TextureUrl = string.IsNullOrEmpty(skinUrl)
-                ? string.Empty
-                : $"{skinUrl}{(skinUrl.Contains('?') ? '&' : '?')}_={DateTime.UtcNow.Ticks}";
+            TextureUrl = WithCacheBuster(skinUrl);
+            CapeUrl = WithCacheBuster(userTextureInfo.ExternalTextureCloakUrl);
 
             Debug.WriteLine($"[{DateTime.Now:HH:mm:ss:fff}] Textures updated: {TextureUrl}");
         }
@@ -74,6 +102,80 @@ public class ProfilePageViewModel : PageViewModelBase
         {
             SentrySdk.CaptureException(exception);
         }
+    }
+
+    private static string WithCacheBuster(string? url)
+        => string.IsNullOrEmpty(url)
+            ? string.Empty
+            : $"{url}{(url.Contains('?') ? '&' : '?')}_={DateTime.UtcNow.Ticks}";
+
+    private async void LoadStats()
+    {
+        try
+        {
+            // Stats come from the servers' stats sites; without the backend there is nothing to ask.
+            if (_backendChecker.IsOffline)
+            {
+                HasNoStats = true;
+                return;
+            }
+
+            var response = await _manager.GetProfiles(LauncherUser.AccessToken);
+            var cards = (response.Data ?? [])
+                .OrderBy(profile => profile.Priority)
+                .Select(profile => new ProfileStatsCardViewModel(profile.Name, profile.DisplayName,
+                    profile.IconBase64, profile.GameVersion, LocalizationService))
+                .ToList();
+
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                StatsCards.Clear();
+                foreach (var card in cards)
+                    StatsCards.Add(card);
+                HasNoStats = cards.Count == 0;
+            });
+
+            await Task.WhenAll(cards.Select(LoadCardAsync));
+        }
+        catch (Exception exception)
+        {
+            SentrySdk.CaptureException(exception);
+            HasNoStats = StatsCards.Count == 0;
+        }
+    }
+
+    private async Task LoadCardAsync(ProfileStatsCardViewModel card)
+    {
+        var statsTask = _serverStatsService.GetAsync(card.Name, LauncherUser.Uuid, LauncherUser.Name);
+        var clientTimeTask = _clientTimeService.GetTotalAsync(card.Name);
+
+        ServerPlayerStats? stats = null;
+        try
+        {
+            stats = await statsTask;
+        }
+        catch (Exception exception)
+        {
+            SentrySdk.CaptureException(exception);
+        }
+
+        TimeSpan? clientTime = null;
+        try
+        {
+            clientTime = await clientTimeTask;
+        }
+        catch (Exception exception)
+        {
+            SentrySdk.CaptureException(exception);
+        }
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            // A profile whose server has no stats site (or does not know the player) is left out.
+            if (!card.Apply(stats, clientTime))
+                StatsCards.Remove(card);
+            HasNoStats = StatsCards.Count == 0;
+        });
     }
 
     public Task UploadSkinAsync(Stream fileStream, string fileName)

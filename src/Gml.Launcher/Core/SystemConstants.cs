@@ -66,4 +66,17 @@ public class SystemConstants
     public const string TextureReset = "TextureReset";
     public const string InvalidSkinFormat = "InvalidSkinFormat";
     public const string InvalidCloakFormat = "InvalidCloakFormat";
+    public const string ProfileStatsTitle = "ProfileStatsTitle";
+    public const string StatsHoursShort = "StatsHoursShort";
+    public const string StatsMinutesShort = "StatsMinutesShort";
+    public const string StatsNoProfiles = "StatsNoProfiles";
+    public const string StatsServerPlayTime = "StatsServerPlayTime";
+    public const string StatsClientTime = "StatsClientTime";
+    public const string StatsServerLastSeen = "StatsServerLastSeen";
+    public const string StatsServerAdvancements = "StatsServerAdvancements";
+    public const string StatsServerNote = "StatsServerNote";
+    public const string StatsOutOf = "StatsOutOf";
+    public const string SkinViewerHint = "SkinViewerHint";
+    public const string StatsToday = "StatsToday";
+    public const string StatsYesterday = "StatsYesterday";
 }

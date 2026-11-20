@@ -379,6 +379,21 @@
   <data name="PresenceMenu" xml:space="preserve">
     <value>В главном меню</value>
   </data>
+  <data name="ProfileStatsTitle" xml:space="preserve">
+    <value>Статистика на сервере</value>
+  </data>
+  <data name="StatsHoursShort" xml:space="preserve">
+    <value>ч</value>
+  </data>
+  <data name="StatsMinutesShort" xml:space="preserve">
+    <value>мин</value>
+  </data>
+  <data name="StatsNoProfiles" xml:space="preserve">
+    <value>Статистики с сервера пока нет</value>
+  </data>
+  <data name="SkinViewerHint" xml:space="preserve">
+    <value>Потяните, чтобы повернуть</value>
+  </data>
   <data name="Diagnostics" xml:space="preserve">
     <value>Диагностика</value>
   </data>
@@ -432,5 +447,29 @@
   </data>
   <data name="RamAutoPreview" xml:space="preserve">
     <value>Будет выделено {0} МБ из рекомендуемых {1} МБ (свободно сейчас {2} МБ). Объём подбирается под свободную память перед каждым запуском.</value>
+  </data>
+  <data name="StatsServerPlayTime" xml:space="preserve">
+    <value>Время на сервере</value>
+  </data>
+  <data name="StatsClientTime" xml:space="preserve">
+    <value>Профиль запущен</value>
+  </data>
+  <data name="StatsServerLastSeen" xml:space="preserve">
+    <value>Последний заход</value>
+  </data>
+  <data name="StatsServerAdvancements" xml:space="preserve">
+    <value>Достижения</value>
+  </data>
+  <data name="StatsServerNote" xml:space="preserve">
+    <value>Данные с сайта статистики сервера обновляются раз в час, время запуска профиля считается по логам игры на этом компьютере</value>
+  </data>
+  <data name="StatsOutOf" xml:space="preserve">
+    <value>из</value>
+  </data>
+  <data name="StatsToday" xml:space="preserve">
+    <value>сегодня</value>
+  </data>
+  <data name="StatsYesterday" xml:space="preserve">
+    <value>вчера</value>
   </data>
 </root>

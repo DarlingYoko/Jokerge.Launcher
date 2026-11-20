@@ -3,9 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Gml.Launcher.ViewModels.Pages"
+             xmlns:cvm="clr-namespace:Gml.Launcher.ViewModels.Components"
              xmlns:lang="clr-namespace:Gml.Launcher.Assets.Resources"
              xmlns:components="clr-namespace:Gml.Launcher.Views.Components"
              xmlns:converters="clr-namespace:Gml.Launcher.Core.Converters"
+             xmlns:stats="clr-namespace:Gml.Launcher.Core.Stats"
              mc:Ignorable="d"
              d:DesignWidth="1000"
              d:DesignHeight="600"
@@ -13,11 +15,8 @@
              x:Class="Gml.Launcher.Views.Pages.ProfilePageView">
 
     <Grid>
-        <!-- Background -->
-        <!-- <components:BackgroundComponent Grid.Column="0" /> -->
-
         <Border Padding="20">
-            <Grid RowDefinitions="Auto, 30, *">
+            <Grid RowDefinitions="Auto, 20, *">
 
                 <!-- Navigation -->
                 <Grid Grid.Row="0">
@@ -29,27 +28,24 @@
                                           Command="{Binding GoBackCommand}" />
                 </Grid>
 
-                <!-- Player Info -->
-                <Grid Grid.Row="2"
-                      HorizontalAlignment="Center"
-                      VerticalAlignment="Top">
+                <Grid Grid.Row="2" ColumnDefinitions="Auto, 24, *">
 
+                    <!-- Player: 3D skin + texture buttons -->
                     <components:ProfileUserControl
+                        Grid.Column="0"
                         Width="350"
-                        Height="350"
                         UserName="{Binding LauncherUser.Name}"
-                        SkinUrl="{Binding TextureUrl, Converter={converters:NoiseStringAddConverter}}"
+                        SkinUrl="{Binding TextureUrl}"
+                        CapeUrl="{Binding CapeUrl}"
+                        ViewerHint="{Binding SkinViewerHint}"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top">
-
-                        <components:ProfileInfoComponent />
 
                         <StackPanel Orientation="Horizontal"
                                     Spacing="15"
                                     HorizontalAlignment="Center">
 
                             <components:GmlButton Classes="Icon Additional"
-                                                  Margin="0, 0, 0, 0"
                                                   IsEnabled="{Binding !IsUploading}"
                                                   Click="OnChangeSkinClick"
                                                   IconPath="/Assets/Images/profile.svg"
@@ -58,7 +54,6 @@
                                                   HorizontalAlignment="Center" />
 
                             <components:GmlButton Classes="Icon Additional"
-                                                  Margin="0, 0, 0, 0"
                                                   IsEnabled="{Binding !IsUploading}"
                                                   Click="OnChangeCloakClick"
                                                   IconPath="/Assets/Images/document.svg"
@@ -67,19 +62,138 @@
                                                   HorizontalAlignment="Center" />
 
                             <components:GmlButton Classes="Icon Additional"
-                                                  Margin="0, 0, 0, 0"
                                                   IsEnabled="{Binding !IsUploading}"
                                                   Command="{Binding ResetCommand}"
                                                   IconPath="/Assets/Images/download.svg"
                                                   Text="{x:Static lang:Resources.Reset}"
                                                   ToolTip.Tip="{x:Static lang:Resources.Reset}"
                                                   HorizontalAlignment="Center" />
-
-
                         </StackPanel>
 
                     </components:ProfileUserControl>
 
+                    <!-- Per-profile statistics from the stats sites of the servers -->
+                    <Grid Grid.Column="2" RowDefinitions="Auto, Auto, 16, *">
+                        <TextBlock Grid.Row="0"
+                                   Text="{Binding StatsTitle}"
+                                   Foreground="{DynamicResource HeadlineColor}"
+                                   FontSize="20"
+                                   FontWeight="Bold" />
+                        <TextBlock Grid.Row="1"
+                                   Margin="0, 6, 0, 0"
+                                   Text="{Binding StatsSourceNote}"
+                                   Foreground="{DynamicResource ContentColor}"
+                                   FontSize="12"
+                                   TextWrapping="Wrap" />
+
+                        <TextBlock Grid.Row="3"
+                                   IsVisible="{Binding HasNoStats}"
+                                   Text="{Binding NoStatsText}"
+                                   Foreground="{DynamicResource ContentColor}" />
+
+                        <ScrollViewer Grid.Row="3"
+                                      HorizontalScrollBarVisibility="Disabled"
+                                      VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding StatsCards}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Spacing="14" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="cvm:ProfileStatsCardViewModel">
+                                        <Border Padding="22"
+                                                CornerRadius="20"
+                                                BorderThickness="1"
+                                                Background="{DynamicResource FrameBackgroundColor}"
+                                                BorderBrush="{DynamicResource FrameBackgroundBorderColor}">
+                                            <StackPanel Spacing="16">
+
+                                                <!-- Profile -->
+                                                <Grid ColumnDefinitions="Auto, *">
+                                                    <Border Grid.Column="0"
+                                                            Width="44" Height="44"
+                                                            Margin="0, 0, 14, 0"
+                                                            CornerRadius="12"
+                                                            ClipToBounds="True"
+                                                            Background="{DynamicResource FormBackgroundColor}">
+                                                        <Image IsVisible="{Binding HasIcon}"
+                                                               Source="{Binding IconBase64, Converter={converters:Base64ToBitmapConverter}}"
+                                                               Stretch="UniformToFill" />
+                                                    </Border>
+                                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                                        <TextBlock Text="{Binding DisplayName}"
+                                                                   Foreground="{DynamicResource HeadlineColor}"
+                                                                   FontSize="17"
+                                                                   FontWeight="Bold"
+                                                                   TextTrimming="CharacterEllipsis" />
+                                                        <TextBlock Text="{Binding GameVersion}"
+                                                                   Foreground="{DynamicResource ContentColor}"
+                                                                   FontSize="12" />
+                                                    </StackPanel>
+                                                </Grid>
+
+                                                <components:LoadingControl IsVisible="{Binding IsLoading}"
+                                                                           Background="Transparent"
+                                                                           Foreground="{DynamicResource PrimaryColor}"
+                                                                           Height="40"
+                                                                           Size="24" />
+
+                                                <!-- Numbers: 2 x 2 tiles -->
+                                                <ItemsControl ItemsSource="{Binding Tiles}" Margin="-5">
+                                                    <ItemsControl.Styles>
+                                                        <Style Selector="TextBlock.value">
+                                                            <Setter Property="Foreground" Value="{DynamicResource HeadlineColor}" />
+                                                        </Style>
+                                                        <Style Selector="TextBlock.value.accent">
+                                                            <Setter Property="Foreground" Value="{DynamicResource PrimaryColor}" />
+                                                        </Style>
+                                                    </ItemsControl.Styles>
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <UniformGrid Columns="2" />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate x:DataType="stats:StatTile">
+                                                            <Border Margin="5"
+                                                                    Padding="16, 14"
+                                                                    CornerRadius="14"
+                                                                    BorderThickness="1"
+                                                                    Background="{DynamicResource FormBackgroundColor}"
+                                                                    BorderBrush="{DynamicResource FormBorderColor}">
+                                                                <StackPanel Spacing="4">
+                                                                    <TextBlock Classes="value"
+                                                                               Classes.accent="{Binding IsAccent}"
+                                                                               Text="{Binding Value}"
+                                                                               FontSize="22"
+                                                                               FontWeight="ExtraBlack"
+                                                                               TextTrimming="CharacterEllipsis" />
+                                                                    <TextBlock Text="{Binding Label}"
+                                                                               Foreground="{DynamicResource ContentColor}"
+                                                                               FontSize="12" />
+                                                                    <ProgressBar IsVisible="{Binding HasProgress}"
+                                                                                 Margin="0, 6, 0, 0"
+                                                                                 Minimum="0"
+                                                                                 Maximum="1"
+                                                                                 Value="{Binding ProgressValue}"
+                                                                                 Height="4"
+                                                                                 MinHeight="4"
+                                                                                 CornerRadius="2"
+                                                                                 Foreground="{DynamicResource PrimaryColor}"
+                                                                                 Background="{DynamicResource FormBorderColor}" />
+                                                                </StackPanel>
+                                                            </Border>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
                 </Grid>
 
             </Grid>

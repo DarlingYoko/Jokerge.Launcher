@@ -46,6 +46,12 @@ public static class ServiceLocator
             typeof(ISettingsService)
         );
         Locator.CurrentMutable.RegisterConstant(new SkinUploadService(manager), typeof(ISkinUploadService));
+        Locator.CurrentMutable.RegisterConstant(
+            new ServerStatsService(ServerStatsService.CreateHttpClient(), ResourceKeysDictionary.ServerStatsUrl),
+            typeof(IServerStatsService));
+        Locator.CurrentMutable.RegisterConstant(
+            new ClientTimeService(manager, GetRequiredService<IStorageService>()),
+            typeof(IClientTimeService));
         Locator.CurrentMutable.RegisterConstant(new DiscordPresenceService(
                 manager,
                 GetRequiredService<ILocalizationService>(),
