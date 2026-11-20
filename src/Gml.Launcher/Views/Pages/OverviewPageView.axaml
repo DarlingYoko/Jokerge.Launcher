@@ -51,23 +51,25 @@
                                         Percentage="{Binding LoadingPercentage}"
                                         Speed="{Binding LoadingSpeed}" />
 
-                <!-- News -->
-                <!-- <Grid RowDefinitions="Auto, 0, *" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="2"> -->
-                <!--     <TextBlock Classes="HeadlineText" Text="{x:Static lang:Resources.News}"/> -->
-                <!--     <ScrollViewer Grid.Row="2" CornerRadius="10" ClipToBounds="True"> -->
-                <!--         <ItemsControl ItemsSource="{Binding News}"> -->
-                <!--             <ItemsControl.DataTemplates> -->
-                <!--                 <DataTemplate x:DataType="news:NewsReadDto"> -->
-                <!-- -->
-                <!--                     <components:NewsComponent Title="{Binding Title}" -->
-                <!--                                               Description="{Binding Content}" -->
-                <!--                                               Date="{Binding Date}" -->
-                <!--                                               Margin="0, 0, 0, 10"/> -->
-                <!--                 </DataTemplate> -->
-                <!--             </ItemsControl.DataTemplates> -->
-                <!--         </ItemsControl> -->
-                <!--     </ScrollViewer> -->
-                <!-- </Grid> -->
+                <!-- News: written by the admin in the panel (plus external listeners), newest first -->
+                <Grid Grid.Row="2"
+                      Grid.Column="0"
+                      RowDefinitions="Auto, *"
+                      VerticalAlignment="Stretch">
+                    <TextBlock Classes="HeadlineText" Text="{x:Static lang:Resources.News}" />
+                    <ScrollViewer Grid.Row="1" CornerRadius="10" ClipToBounds="True">
+                        <ItemsControl ItemsSource="{Binding News}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="news:NewsReadDto">
+                                    <components:NewsComponent Title="{Binding Title}"
+                                                              Description="{Binding Content}"
+                                                              Date="{Binding Date}"
+                                                              Margin="0, 0, 0, 10" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
 
                 <!-- Server Info -->
                 <components:ServerInfo Grid.Column="2"

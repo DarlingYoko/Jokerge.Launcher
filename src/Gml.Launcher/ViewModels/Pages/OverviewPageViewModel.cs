@@ -562,7 +562,9 @@ public class OverviewPageViewModel : PageViewModelBase
             }
             else
             {
-                News = new ObservableCollection<NewsReadDto>(news.Data ?? []);
+                // The server sends each post with its author's offset; show it in the player's time.
+                News = new ObservableCollection<NewsReadDto>(
+                    (news.Data ?? []).Select(item => item with { Date = item.Date?.ToLocalTime() }));
             }
             ;
         }

@@ -10,10 +10,14 @@
         <!-- Set Defaults -->
         <Setter Property="Template">
             <ControlTemplate>
-                <controls:StackFrameBorder Padding="20">
-                    <TextBlock Classes="HeadlineText" Text="{TemplateBinding Title}" />
-                    <avalonia:HtmlPanel x:Name="HtmlPanel" Text="{TemplateBinding Description}" Margin="0, 0, 0, 10" />
-                    <TextBlock Classes="FormText" FontSize="12" Text="{TemplateBinding Date}" Margin="0, 10, 0, 0" />
+                <controls:StackFrameBorder Padding="20" Spacing="8">
+                    <TextBlock Classes="HeadlineText" FontSize="18" TextWrapping="Wrap" Text="{TemplateBinding Title}" />
+                    <avalonia:HtmlPanel x:Name="HtmlPanel" Text="{TemplateBinding Description}" />
+                    <TextBlock Classes="FormText"
+                               FontSize="12"
+                               Margin="0"
+                               IsVisible="{Binding Date, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}"
+                               Text="{Binding Date, RelativeSource={RelativeSource TemplatedParent}, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" />
                 </controls:StackFrameBorder>
             </ControlTemplate>
         </Setter>
