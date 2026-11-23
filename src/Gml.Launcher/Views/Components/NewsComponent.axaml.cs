@@ -1,12 +1,7 @@
 using System;
-using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-using Avalonia.Controls.Templates;
-using Avalonia.Interactivity;
-using Avalonia.Media;
-using Avalonia.Styling;
 using TheArtOfDev.HtmlRenderer.Avalonia;
 
 namespace Gml.Launcher.Views.Components;
@@ -22,6 +17,8 @@ public class NewsComponent : TemplatedControl
     public static readonly StyledProperty<DateTimeOffset?> DateProperty = AvaloniaProperty.Register<NewsComponent, DateTimeOffset?>(
         nameof(Date), DateTimeOffset.Now);
 
+    private HtmlPanel? _htmlPanel;
+
     public DateTimeOffset? Date
     {
         get => GetValue(DateProperty);
@@ -30,7 +27,7 @@ public class NewsComponent : TemplatedControl
 
     public string Description
     {
-        get => $"<span style='color: gray;'>{GetValue(DescriptionProperty)}</span>";
+        get => GetValue(DescriptionProperty);
         set => SetValue(DescriptionProperty, value);
     }
 
@@ -40,12 +37,28 @@ public class NewsComponent : TemplatedControl
         set => SetValue(TitleProperty, value);
     }
 
+    // The text sits directly on the profile background, so it is light instead of the gray that
+    // was meant for a dark card. The HTML renderer has no access to the app styles, hence inline.
+    private static string Styled(string? html) =>
+        $"<div style='color: #D9D9D9; font-size: 13px; line-height: 1.45;'>{html}</div>";
+
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
-        if (e.NameScope.Find<HtmlPanel>("HtmlPanel") is { } htmlPanel)
-        {
-            htmlPanel.Text = $"<span style='color: gray;'>{Description}</span>";
-        }
+        base.OnApplyTemplate(e);
+        _htmlPanel = e.NameScope.Find<HtmlPanel>("HtmlPanel");
+        UpdateDescription();
+    }
+
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        base.OnPropertyChanged(change);
+        if (change.Property == DescriptionProperty)
+            UpdateDescription();
+    }
+
+    private void UpdateDescription()
+    {
+        if (_htmlPanel is not null)
+            _htmlPanel.Text = Styled(Description);
     }
 }
-

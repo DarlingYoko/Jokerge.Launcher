@@ -27,10 +27,22 @@
                    Opacity=".1"
                    Fill="{DynamicResource BackgroundOverlay}" />
 
+        <!-- Darkens the right edge just enough for the news to stay readable on bright backgrounds -->
+        <Rectangle Grid.Column="0"
+                   Grid.ColumnSpan="2"
+                   IsHitTestVisible="False">
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="55%, 0%" EndPoint="100%, 0%">
+                    <GradientStop Offset="0" Color="#00000000" />
+                    <GradientStop Offset="1" Color="#A6000000" />
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+
         <!-- Content -->
         <Border Grid.Column="1" Padding="25">
 
-            <Grid ColumnDefinitions="Auto, 30, *"
+            <Grid ColumnDefinitions="*, 28, 340"
                   RowDefinitions="60, 30, *, 30, Auto">
 
                 <components:OnlineComponent
@@ -51,20 +63,36 @@
                                         Percentage="{Binding LoadingPercentage}"
                                         Speed="{Binding LoadingSpeed}" />
 
-                <!-- News: written by the admin in the panel (plus external listeners), newest first -->
+                <!-- News: written by the admin in the panel (plus external listeners), newest first.
+                     A transparent column beside the profile info; the list fades out at the bottom
+                     instead of being cut by a frame. -->
                 <Grid Grid.Row="2"
-                      Grid.Column="0"
+                      Grid.Column="2"
                       RowDefinitions="Auto, *"
                       VerticalAlignment="Stretch">
-                    <TextBlock Classes="HeadlineText" Text="{x:Static lang:Resources.News}" />
-                    <ScrollViewer Grid.Row="1" CornerRadius="10" ClipToBounds="True">
-                        <ItemsControl ItemsSource="{Binding News}">
+                    <TextBlock Classes="HeadlineText"
+                               FontSize="18"
+                               Margin="0, 0, 0, 16"
+                               Text="{x:Static lang:Resources.News}" />
+                    <ScrollViewer Grid.Row="1"
+                                  VerticalScrollBarVisibility="Hidden">
+                        <ScrollViewer.OpacityMask>
+                            <LinearGradientBrush StartPoint="0%, 0%" EndPoint="0%, 100%">
+                                <GradientStop Offset="0.85" Color="Black" />
+                                <GradientStop Offset="1" Color="Transparent" />
+                            </LinearGradientBrush>
+                        </ScrollViewer.OpacityMask>
+                        <ItemsControl ItemsSource="{Binding News}" Margin="0, 0, 0, 40">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Spacing="22" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate x:DataType="news:NewsReadDto">
                                     <components:NewsComponent Title="{Binding Title}"
                                                               Description="{Binding Content}"
-                                                              Date="{Binding Date}"
-                                                              Margin="0, 0, 0, 10" />
+                                                              Date="{Binding Date}" />
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -72,7 +100,7 @@
                 </Grid>
 
                 <!-- Server Info -->
-                <components:ServerInfo Grid.Column="2"
+                <components:ServerInfo Grid.Column="0"
                                        Grid.Row="2"
                                        Classes.Animated="{Binding ListViewModel.HasSelectedItem}"
                                        PlayCommand="{Binding PlayCommand}"

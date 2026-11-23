@@ -3,24 +3,48 @@
         xmlns:controls="using:Gml.Launcher.Views.Components"
         xmlns:avalonia="clr-namespace:TheArtOfDev.HtmlRenderer.Avalonia;assembly=Avalonia.HtmlRenderer">
     <Design.PreviewWith>
-        <controls:NewsComponent />
+        <Border Background="#3A4A3A" Padding="20" Width="320">
+            <controls:NewsComponent Title="Обновление сборки" Description="Добавили новые моды и починили вход" />
+        </Border>
     </Design.PreviewWith>
 
+    <!-- No card: the news sit straight on the profile background like the hero text, with an
+         accent line and a soft shadow keeping them readable on any background. -->
     <Style Selector="controls|NewsComponent">
-        <!-- Set Defaults -->
         <Setter Property="Template">
             <ControlTemplate>
-                <controls:StackFrameBorder Padding="20" Spacing="8">
-                    <TextBlock Classes="HeadlineText" FontSize="18" TextWrapping="Wrap" Text="{TemplateBinding Title}" />
-                    <avalonia:HtmlPanel x:Name="HtmlPanel" Text="{TemplateBinding Description}" />
-                    <TextBlock Classes="FormText"
-                               FontSize="12"
-                               Margin="0"
-                               IsVisible="{Binding Date, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}"
-                               Text="{Binding Date, RelativeSource={RelativeSource TemplatedParent}, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" />
-                </controls:StackFrameBorder>
+                <Grid ColumnDefinitions="3, 14, *">
+                    <Border Grid.Column="0"
+                            CornerRadius="2"
+                            Background="{DynamicResource PrimaryColor}" />
+
+                    <StackPanel Grid.Column="2" Spacing="4">
+                        <StackPanel.Effect>
+                            <DropShadowEffect BlurRadius="10" OffsetX="0" OffsetY="1" Opacity="0.7" Color="Black" />
+                        </StackPanel.Effect>
+
+                        <TextBlock Classes="NewsDate"
+                                   IsVisible="{Binding Date, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                   Text="{Binding Date, RelativeSource={RelativeSource TemplatedParent}, StringFormat='{}{0:dd.MM.yyyy · HH:mm}'}" />
+                        <TextBlock Classes="NewsTitle" Text="{TemplateBinding Title}" />
+                        <avalonia:HtmlPanel x:Name="HtmlPanel" Background="Transparent" Margin="0, 2, 0, 0" />
+                    </StackPanel>
+                </Grid>
             </ControlTemplate>
         </Setter>
     </Style>
-</Styles>
 
+    <Style Selector="controls|NewsComponent TextBlock.NewsDate">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="LetterSpacing" Value="0.5" />
+        <Setter Property="Foreground" Value="#B3FFFFFF" />
+    </Style>
+
+    <Style Selector="controls|NewsComponent TextBlock.NewsTitle">
+        <Setter Property="FontSize" Value="17" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Foreground" Value="{DynamicResource HeadlineColor}" />
+    </Style>
+</Styles>
