@@ -121,6 +121,12 @@
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Left" />
 
+                <!-- Route picker: hidden unless the profile has several entry points -->
+                <components:ServerRoutesView Grid.Row="4"
+                                             Grid.Column="0"
+                                             HorizontalAlignment="Left"
+                                             DataContext="{Binding ServerRoutes}" />
+
                 <!-- Footer -->
                 <!-- <Grid Grid.Row="4" -->
                 <!--       Grid.Column="0" -->

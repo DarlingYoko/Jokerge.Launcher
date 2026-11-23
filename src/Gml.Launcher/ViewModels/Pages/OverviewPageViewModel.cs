@@ -11,6 +11,7 @@ using Gml.Launcher.Assets;
 using Gml.Launcher.Core;
 using Gml.Launcher.Core.Diagnostics;
 using Gml.Launcher.Core.Exceptions;
+using Gml.Launcher.Core.Routes;
 using Gml.Launcher.Core.Services;
 using Gml.Launcher.Models;
 using Gml.Launcher.ViewModels.Base;
@@ -59,6 +60,7 @@ public class OverviewPageViewModel : PageViewModelBase
     private readonly ISettingsService _settingsService;
     private readonly IDiscordPresenceService _discordPresence;
     private readonly IDisposable? _speedSubscription;
+    private readonly RouteFilePreparer _routeFiles;
     private RamPlan? _ramPlan;
 
     internal OverviewPageViewModel(IScreen screen,
@@ -70,7 +72,8 @@ public class OverviewPageViewModel : PageViewModelBase
         ISettingsService? settingsService = null,
         IBackendChecker? backendChecker = null,
         LogHandler? logHandler = null,
-        IDiscordPresenceService? discordPresence = null) : base(screen)
+        IDiscordPresenceService? discordPresence = null,
+        IMinecraftStatusPinger? statusPinger = null) : base(screen)
     {
         _mainViewModel = screen as MainWindowViewModel ?? throw new Exception("Not valid screen");
         User = user;
@@ -104,6 +107,14 @@ public class OverviewPageViewModel : PageViewModelBase
         _discordPresence = discordPresence
                            ?? Locator.Current.GetService<IDiscordPresenceService>()
                            ?? throw new ServiceNotFoundException(typeof(IDiscordPresenceService));
+
+        var pinger = statusPinger
+                     ?? Locator.Current.GetService<IMinecraftStatusPinger>()
+                     ?? throw new ServiceNotFoundException(typeof(IMinecraftStatusPinger));
+        var routesSource = new GmlServerRoutesSource(_gmlManager, user.AccessToken, _backendChecker);
+        var routeChoices = new RouteChoiceStore(_storageService);
+        ServerRoutes = new ServerRoutesViewModel(routesSource, pinger, routeChoices, LocalizationService);
+        _routeFiles = new RouteFilePreparer(routesSource, pinger, routeChoices);
 
         GoProfileCommand = ReactiveCommand.CreateFromObservable(
             () => screen.Router.Navigate.Execute(new ProfilePageViewModel(screen, User, _gmlManager))
@@ -231,6 +242,7 @@ public class OverviewPageViewModel : PageViewModelBase
     public ICommand GoSettingsCommand { get; set; }
     public ICommand HomeCommand { get; set; }
     public ListViewModel ListViewModel { get; } = new();
+    public ServerRoutesViewModel ServerRoutes { get; }
     public ILauncherUser User { get; }
     public bool BackendIsActive { get; }
 
@@ -259,6 +271,20 @@ public class OverviewPageViewModel : PageViewModelBase
     {
         SaveSelectedServer(profile);
         UpdateModsButtonVisibility(profile);
+        LoadServerRoutes(profile);
+    }
+
+    private async void LoadServerRoutes(ProfileReadDto? profile)
+    {
+        try
+        {
+            // Profiles also reload from the backend's change notifications, off the UI thread.
+            await Dispatcher.UIThread.InvokeAsync(() => ServerRoutes.LoadAsync(profile?.Name));
+        }
+        catch (Exception exception)
+        {
+            SentrySdk.CaptureException(exception);
+        }
     }
     private void UpdateModsButtonVisibility(ProfileReadDto? profile)
     {
@@ -334,6 +360,8 @@ public class OverviewPageViewModel : PageViewModelBase
                 if (!await ConfirmPreLaunchChecks(profileInfo?.Data))
                     return;
 
+                (await PrepareRouteFile()).DisposeWith(disposable);
+
                 _gmlManager.Gameloader.GameLaunched
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Subscribe(c => _mainViewModel._gameLaunched.OnNext(true))
@@ -399,6 +427,21 @@ public class OverviewPageViewModel : PageViewModelBase
                 await _discordPresence.ShowLauncher();
             }
         });
+    }
+
+    /// <summary>Tells the client mod which route to connect through; kept up to date until the game exits.</summary>
+    private async Task<IDisposable> PrepareRouteFile()
+    {
+        try
+        {
+            return await _routeFiles.PrepareAsync(_gmlManager.InstallationDirectory,
+                ListViewModel.SelectedProfile!.Name, _gmlManager.FilesSynced);
+        }
+        catch (Exception exception)
+        {
+            SentrySdk.CaptureException(exception);
+            return Disposable.Empty;
+        }
     }
 
     private async Task<ResponseMessage<ProfileReadInfoDto?>?> GetProfileInfo()

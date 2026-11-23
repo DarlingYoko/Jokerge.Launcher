@@ -474,4 +474,19 @@ To exit offline mode, make sure that the server is available, and then restart t
   <data name="StatsYesterday" xml:space="preserve">
     <value>yesterday</value>
   </data>
+  <data name="ServerRoutesTitle" xml:space="preserve">
+    <value>Connection</value>
+  </data>
+  <data name="ServerRouteAuto" xml:space="preserve">
+    <value>Automatic</value>
+  </data>
+  <data name="ServerRoutePing" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="ServerRoutesCheck" xml:space="preserve">
+    <value>Check</value>
+  </data>
+  <data name="ServerRoutesChecking" xml:space="preserve">
+    <value>Checking…</value>
+  </data>
 </root>

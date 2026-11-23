@@ -1,0 +1,114 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Gml.Launcher.ViewModels.Components"
+             xmlns:components="clr-namespace:Gml.Launcher.Views.Components"
+             mc:Ignorable="d"
+             d:DesignWidth="520"
+             d:DesignHeight="90"
+             x:DataType="vm:ServerRoutesViewModel"
+             x:Class="Gml.Launcher.Views.Components.ServerRoutesView"
+             IsVisible="{Binding IsVisible}">
+
+    <!-- Route picker: which entry point the game connects through, with status and ping from this PC -->
+
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="ComboBoxDropDownBackground" Color="#F2111111" />
+        <SolidColorBrush x:Key="ComboBoxDropDownBorderBrush" Color="#2E2E2E" />
+        <SolidColorBrush x:Key="ComboBoxItemBackgroundPointerOver" Color="#1C1C1C" />
+        <SolidColorBrush x:Key="ComboBoxItemBackgroundSelected" Color="#50eb4444" />
+        <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedPointerOver" Color="#60eb4444" />
+        <SolidColorBrush x:Key="ComboBoxItemBackgroundPressed" Color="#2C2C2C" />
+        <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedPressed" Color="#60eb4444" />
+        <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="#CC1C1C1C" />
+        <SolidColorBrush x:Key="ComboBoxBorderBrushPointerOver" Color="#2C2C2C" />
+        <SolidColorBrush x:Key="ComboBoxBackgroundFocused" Color="#B3111111" />
+        <SolidColorBrush x:Key="ComboBoxBorderBrushFocused" Color="#a42f2f" />
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <Style Selector="ComboBox.RouteBox">
+            <Setter Property="Background" Value="#B3111111" />
+            <Setter Property="BorderBrush" Value="{DynamicResource FrameBackgroundBorderColor}" />
+            <Setter Property="Foreground" Value="{DynamicResource HeadlineColor}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="25" />
+            <Setter Property="Height" Value="50" />
+            <Setter Property="MinWidth" Value="300" />
+            <Setter Property="Padding" Value="20, 0, 8, 0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+        <Style Selector="ComboBoxItem">
+            <Setter Property="Padding" Value="14, 10" />
+            <Setter Property="Margin" Value="4, 2" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource HeadlineColor}" />
+        </Style>
+        <Style Selector="Ellipse.StatusDot">
+            <Setter Property="Width" Value="9" />
+            <Setter Property="Height" Value="9" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Fill" Value="#6B6B6B" />
+        </Style>
+        <Style Selector="Ellipse.StatusDot.Online">
+            <Setter Property="Fill" Value="#3BA55D" />
+        </Style>
+        <Style Selector="Ellipse.StatusDot.Offline">
+            <Setter Property="Fill" Value="#E5484D" />
+        </Style>
+    </UserControl.Styles>
+
+    <StackPanel Spacing="8" HorizontalAlignment="Left">
+        <TextBlock Text="{Binding Title}"
+                   Foreground="{DynamicResource ContentColor}"
+                   FontSize="14"
+                   FontWeight="Medium" />
+
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <ComboBox Classes="RouteBox"
+                      ItemsSource="{Binding Items}"
+                      SelectedItem="{Binding SelectedItem}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:RouteItemViewModel">
+                        <Grid ColumnDefinitions="Auto, *, Auto" MinWidth="240">
+                            <Ellipse Grid.Column="0"
+                                     Classes="StatusDot"
+                                     Classes.Online="{Binding IsOnline}"
+                                     Classes.Offline="{Binding IsOffline}"
+                                     Margin="0, 0, 12, 0" />
+                            <StackPanel Grid.Column="1"
+                                        Orientation="Horizontal"
+                                        Spacing="8">
+                                <TextBlock Text="{Binding Name}"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource HeadlineColor}"
+                                           FontWeight="SemiBold" />
+                                <!-- «Автоматически»: the route it would use now -->
+                                <TextBlock Text="{Binding Detail, StringFormat='· {0}'}"
+                                           IsVisible="{Binding Detail, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource ContentColor}"
+                                           FontWeight="Medium" />
+                            </StackPanel>
+                            <TextBlock Grid.Column="2"
+                                       Text="{Binding PingText}"
+                                       Margin="16, 0, 0, 0"
+                                       VerticalAlignment="Center"
+                                       Foreground="{DynamicResource ContentColor}"
+                                       FontWeight="Medium" />
+                        </Grid>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <components:GmlButton Classes="Text Additional"
+                                  Command="{Binding CheckCommand}"
+                                  FontSize="14"
+                                  Text="{Binding CheckText}" />
+        </StackPanel>
+    </StackPanel>
+
+</UserControl>

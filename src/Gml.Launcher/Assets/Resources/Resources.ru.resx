@@ -472,4 +472,19 @@
   <data name="StatsYesterday" xml:space="preserve">
     <value>вчера</value>
   </data>
+  <data name="ServerRoutesTitle" xml:space="preserve">
+    <value>Подключение</value>
+  </data>
+  <data name="ServerRouteAuto" xml:space="preserve">
+    <value>Автоматически</value>
+  </data>
+  <data name="ServerRoutePing" xml:space="preserve">
+    <value>{0} мс</value>
+  </data>
+  <data name="ServerRoutesCheck" xml:space="preserve">
+    <value>Проверить</value>
+  </data>
+  <data name="ServerRoutesChecking" xml:space="preserve">
+    <value>Проверка…</value>
+  </data>
 </root>

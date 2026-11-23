@@ -9,6 +9,7 @@ using Gml.Client;
 using Gml.Client.Interfaces;
 using Gml.Launcher.Assets;
 using Gml.Launcher.Core.Diagnostics;
+using Gml.Launcher.Core.Routes;
 using Gml.Launcher.Core.Services;
 using Gml.Launcher.Models;
 using Sentry;
@@ -52,6 +53,7 @@ public static class ServiceLocator
         Locator.CurrentMutable.RegisterConstant(
             new ClientTimeService(manager, GetRequiredService<IStorageService>()),
             typeof(IClientTimeService));
+        Locator.CurrentMutable.RegisterConstant(new MinecraftStatusPinger(), typeof(IMinecraftStatusPinger));
         Locator.CurrentMutable.RegisterConstant(new DiscordPresenceService(
                 manager,
                 GetRequiredService<ILocalizationService>(),

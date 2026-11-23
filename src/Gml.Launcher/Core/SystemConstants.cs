@@ -79,4 +79,9 @@ public class SystemConstants
     public const string SkinViewerHint = "SkinViewerHint";
     public const string StatsToday = "StatsToday";
     public const string StatsYesterday = "StatsYesterday";
+    public const string ServerRoutesTitle = "ServerRoutesTitle";
+    public const string ServerRouteAuto = "ServerRouteAuto";
+    public const string ServerRoutePing = "ServerRoutePing";
+    public const string ServerRoutesCheck = "ServerRoutesCheck";
+    public const string ServerRoutesChecking = "ServerRoutesChecking";
 }

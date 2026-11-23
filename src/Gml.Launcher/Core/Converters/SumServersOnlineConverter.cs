@@ -8,6 +8,10 @@ using Gml.Dto.Servers;
 
 namespace Gml.Launcher.Core.Converters;
 
+/// <summary>
+///     Players online on the profile. A profile lists one server per route (direct domain, bridges) and they all
+///     report the same players, so this is the highest count, not the sum.
+/// </summary>
 public class SumServersOnlineConverter : MarkupExtension, IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -15,7 +19,7 @@ public class SumServersOnlineConverter : MarkupExtension, IValueConverter
         if (value is List<ServerReadDto> server)
             return server
                 .Where(c => c.IsOnline)
-                .Sum(c => c.Online)?
+                .Max(c => c.Online)?
                 .ToString() ?? "0";
 
         return "0";
