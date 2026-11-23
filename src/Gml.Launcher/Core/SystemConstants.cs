@@ -84,4 +84,7 @@ public class SystemConstants
     public const string ServerRoutePing = "ServerRoutePing";
     public const string ServerRoutesCheck = "ServerRoutesCheck";
     public const string ServerRoutesChecking = "ServerRoutesChecking";
+    public const string ModDependenciesTitle = "ModDependenciesTitle";
+    public const string ModNeededBy = "ModNeededBy";
+    public const string ModDependenciesDownloadFailed = "ModDependenciesDownloadFailed";
 }

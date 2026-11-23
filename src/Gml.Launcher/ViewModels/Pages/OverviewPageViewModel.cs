@@ -11,6 +11,7 @@ using Gml.Launcher.Assets;
 using Gml.Launcher.Core;
 using Gml.Launcher.Core.Diagnostics;
 using Gml.Launcher.Core.Exceptions;
+using Gml.Launcher.Core.Mods;
 using Gml.Launcher.Core.Routes;
 using Gml.Launcher.Core.Services;
 using Gml.Launcher.Models;
@@ -61,6 +62,7 @@ public class OverviewPageViewModel : PageViewModelBase
     private readonly IDiscordPresenceService _discordPresence;
     private readonly IDisposable? _speedSubscription;
     private readonly RouteFilePreparer _routeFiles;
+    private readonly OptionalModDependencyGuard _modDependencies;
     private RamPlan? _ramPlan;
 
     internal OverviewPageViewModel(IScreen screen,
@@ -115,6 +117,9 @@ public class OverviewPageViewModel : PageViewModelBase
         var routeChoices = new RouteChoiceStore(_storageService);
         ServerRoutes = new ServerRoutesViewModel(routesSource, pinger, routeChoices, LocalizationService);
         _routeFiles = new RouteFilePreparer(routesSource, pinger, routeChoices);
+        _modDependencies = new OptionalModDependencyGuard(
+            async _ => _backendChecker.IsOffline ? null : (await _gmlManager.GetOptionalModsInfo(User.AccessToken)).Data,
+            new AutomaticModsStore(_storageService));
 
         GoProfileCommand = ReactiveCommand.CreateFromObservable(
             () => screen.Router.Navigate.Execute(new ProfilePageViewModel(screen, User, _gmlManager))
@@ -361,6 +366,7 @@ public class OverviewPageViewModel : PageViewModelBase
                     return;
 
                 (await PrepareRouteFile()).DisposeWith(disposable);
+                (await PrepareOptionalMods()).DisposeWith(disposable);
 
                 _gmlManager.Gameloader.GameLaunched
                     .ObserveOn(RxApp.MainThreadScheduler)
@@ -436,6 +442,23 @@ public class OverviewPageViewModel : PageViewModelBase
         {
             return await _routeFiles.PrepareAsync(_gmlManager.InstallationDirectory,
                 ListViewModel.SelectedProfile!.Name, _gmlManager.FilesSynced);
+        }
+        catch (Exception exception)
+        {
+            SentrySdk.CaptureException(exception);
+            return Disposable.Empty;
+        }
+    }
+
+    /// <summary>Turns on the dependencies of the enabled optional mods; kept up to date until the game exits.</summary>
+    private async Task<IDisposable> PrepareOptionalMods()
+    {
+        try
+        {
+            var profileName = ListViewModel.SelectedProfile!.Name;
+            return await _modDependencies.PrepareAsync(
+                OptionalModFiles.DirectoryFor(_gmlManager.InstallationDirectory, profileName), profileName,
+                _gmlManager.FilesSynced);
         }
         catch (Exception exception)
         {

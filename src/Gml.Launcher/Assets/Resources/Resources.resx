@@ -489,4 +489,13 @@ To exit offline mode, make sure that the server is available, and then restart t
   <data name="ServerRoutesChecking" xml:space="preserve">
     <value>Checking…</value>
   </data>
+  <data name="ModDependenciesTitle" xml:space="preserve">
+    <value>Turned on together with it:</value>
+  </data>
+  <data name="ModNeededBy" xml:space="preserve">
+    <value>Needed by: {0}. It stays on while they are on.</value>
+  </data>
+  <data name="ModDependenciesDownloadFailed" xml:space="preserve">
+    <value>Could not download: {0}</value>
+  </data>
 </root>

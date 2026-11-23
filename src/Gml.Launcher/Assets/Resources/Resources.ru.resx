@@ -487,4 +487,13 @@
   <data name="ServerRoutesChecking" xml:space="preserve">
     <value>Проверка…</value>
   </data>
+  <data name="ModDependenciesTitle" xml:space="preserve">
+    <value>Включатся вместе с ним:</value>
+  </data>
+  <data name="ModNeededBy" xml:space="preserve">
+    <value>Нужен для: {0}. Пока они включены, выключить нельзя.</value>
+  </data>
+  <data name="ModDependenciesDownloadFailed" xml:space="preserve">
+    <value>Не удалось скачать: {0}</value>
+  </data>
 </root>

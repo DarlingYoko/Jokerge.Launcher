@@ -9,4 +9,7 @@ public static class StorageConstants
 
     /// <summary>Followed by the profile name: the route picked for it (none means automatic).</summary>
     public const string SelectedServerRoutePrefix = "SelectedServerRoute.";
+
+    /// <summary>Followed by the profile name: optional mods that are on only because another mod needs them.</summary>
+    public const string AutomaticOptionalModsPrefix = "AutomaticOptionalMods.";
 }

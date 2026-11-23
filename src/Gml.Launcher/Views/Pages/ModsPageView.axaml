@@ -5,7 +5,7 @@
              xmlns:components="clr-namespace:Gml.Launcher.Views.Components"
              xmlns:vm="clr-namespace:Gml.Launcher.ViewModels.Pages"
              xmlns:lang="clr-namespace:Gml.Launcher.Assets.Resources"
-             xmlns:converters="clr-namespace:Gml.Launcher.Core.Converters"
+             xmlns:cvm="clr-namespace:Gml.Launcher.ViewModels.Components"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Gml.Launcher.Views.Pages.ModsPageView"
              x:DataType="vm:ModsPageViewModel">
@@ -80,45 +80,88 @@
                         <ItemsControl x:Name="ModsListControl"
                                       ItemsSource="{Binding ProfileOptionalMods}">
                             <ItemsControl.DataTemplates>
-                                <DataTemplate x:DataType="vm:ExternalModReadDto">
+                                <DataTemplate x:DataType="cvm:OptionalModItemViewModel">
 
                                     <components:StackFrameBorder Margin="0, 0, 0, 10"
                                                                  Spacing="10"
                                                                  VerticalAlignment="Top">
                                         <Grid ColumnDefinitions="Auto, 20, *">
                                             <CheckBox CommandParameter="{Binding .}"
-                                                Command="{Binding ((vm:ModsPageViewModel)DataContext).ChangeOptionalModState, ElementName=ModsListControl}" IsChecked="{Binding IsSelected}" Classes="FormCheckBox" />
+                                                      Command="{Binding ((vm:ModsPageViewModel)DataContext).ChangeOptionalModState, ElementName=ModsListControl}"
+                                                      IsChecked="{Binding IsSelected}"
+                                                      IsEnabled="{Binding CanToggle}"
+                                                      VerticalAlignment="Top"
+                                                      Classes="FormCheckBox" />
 
+                                            <StackPanel Grid.Column="2"
+                                                        VerticalAlignment="Center"
+                                                        Spacing="3">
+                                                <TextBlock Foreground="{DynamicResource HeadlineColor}"
+                                                           FontSize="14"
+                                                           FontWeight="SemiBold"
+                                                           Text="{Binding Title}" />
+                                                <TextBlock Foreground="{DynamicResource ContentColor}"
+                                                           TextWrapping="Wrap"
+                                                           MinWidth="145"
+                                                           LineHeight="20"
+                                                           FontSize="12"
+                                                           Text="{Binding Description}" />
 
-                                            <StackPanel Grid.Column="2">
-                                                <StackPanel VerticalAlignment="Center"
-                                                            Spacing="3">
-                                                    <TextBlock Foreground="{DynamicResource HeadlineColor}"
-                                                               FontSize="14"
-                                                               FontWeight="SemiBold">
-                                                        <TextBlock.Text>
-                                                            <MultiBinding Converter="{converters:ModsNameConverter}">
-                                                                <Binding Path="." />
-                                                                <Binding Path="DataContext"
-                                                                         ElementName="ModsListControl" />
-                                                            </MultiBinding>
-                                                        </TextBlock.Text>
-                                                    </TextBlock>
-                                                    <TextBlock Foreground="{DynamicResource ContentColor}"
-                                                               TextWrapping="Wrap"
-                                                               MinWidth="145"
-                                                               LineHeight="20"
-                                                               FontSize="12">
-                                                        <TextBlock.Text>
-                                                            <MultiBinding
-                                                                Converter="{converters:ModsDescriptionConverter}">
-                                                                <Binding Path="." />
-                                                                <Binding Path="DataContext"
-                                                                         ElementName="ModsListControl" />
-                                                            </MultiBinding>
-                                                        </TextBlock.Text>
-                                                    </TextBlock>
-                                                </StackPanel>
+                                                <!-- Mods turned on together with this one, inside its card -->
+                                                <Border Margin="0, 10, 0, 0"
+                                                        Padding="14, 2, 0, 2"
+                                                        BorderThickness="2, 0, 0, 0"
+                                                        BorderBrush="{DynamicResource ContentColor}"
+                                                        IsVisible="{Binding HasDependencies}">
+                                                    <StackPanel Spacing="10">
+                                                        <TextBlock Foreground="{DynamicResource ContentColor}"
+                                                                   FontSize="12"
+                                                                   Opacity="0.8"
+                                                                   Text="{Binding ((vm:ModsPageViewModel)DataContext).DependenciesTitle, ElementName=ModsListControl}" />
+                                                        <ItemsControl ItemsSource="{Binding Dependencies}">
+                                                            <ItemsControl.ItemsPanel>
+                                                                <ItemsPanelTemplate>
+                                                                    <StackPanel Spacing="10" />
+                                                                </ItemsPanelTemplate>
+                                                            </ItemsControl.ItemsPanel>
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate x:DataType="cvm:DependencyRow">
+                                                                    <Grid Margin="{Binding Indent}"
+                                                                          ColumnDefinitions="Auto, 14, *">
+                                                                        <CheckBox CommandParameter="{Binding Mod}"
+                                                                                  Command="{Binding ((vm:ModsPageViewModel)DataContext).ChangeOptionalModState, ElementName=ModsListControl}"
+                                                                                  IsChecked="{Binding Mod.IsSelected}"
+                                                                                  IsEnabled="{Binding Mod.CanToggle}"
+                                                                                  VerticalAlignment="Top"
+                                                                                  Classes="FormCheckBox" />
+                                                                        <StackPanel Grid.Column="2"
+                                                                                    VerticalAlignment="Center"
+                                                                                    Spacing="2">
+                                                                            <TextBlock Foreground="{DynamicResource HeadlineColor}"
+                                                                                       FontSize="13"
+                                                                                       FontWeight="SemiBold"
+                                                                                       Text="{Binding Mod.Title}" />
+                                                                            <TextBlock Foreground="{DynamicResource ContentColor}"
+                                                                                       TextWrapping="Wrap"
+                                                                                       LineHeight="18"
+                                                                                       FontSize="12"
+                                                                                       Text="{Binding Mod.Description}" />
+                                                                        </StackPanel>
+                                                                    </Grid>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+                                                    </StackPanel>
+                                                </Border>
+
+                                                <!-- Locked on because an enabled mod needs it -->
+                                                <TextBlock Foreground="{DynamicResource ContentColor}"
+                                                           TextWrapping="Wrap"
+                                                           FontSize="12"
+                                                           Opacity="0.8"
+                                                           Margin="0, 6, 0, 0"
+                                                           IsVisible="{Binding HasNeededBy}"
+                                                           Text="{Binding NeededByText}" />
                                             </StackPanel>
 
                                         </Grid>
